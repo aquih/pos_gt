@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="NumpadWidget">
+        <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
+            <button class="mode-button" disabled="1" data-mode='discount'>Disc</button>
+        </t>
+        <t t-jquery=".mode-button[data-mode='price']" t-operation="replace">
+            <button class="mode-button" disabled="1" data-mode='price'>Price</button>
+        </t>
+    </t>
+
+    <t t-extend="ClientDetailsEdit">
+        <t t-jquery=".client-details-box" t-operation="replace">
+            <div class='client-details-box clearfix'>
+                <div class='client-details-left'>
+                    <div class='client-detail'>
+                        <span class='label'>NIT</span>
+                        <input class='detail vat' name='vat' t-att-value='partner.vat || ""'></input>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>Street</span>
+                        <input class='detail client-address-street' name='street' value='Ciudad' t-att-value='partner.street' placeholder='Street'></input>
+                    </div>
+                </div>
+                <div class='client-details-right'>
+                    <div class='client-detail'>
+                        <span class='label'>Correo</span>
+                        <input class='detail client-email' name='email' type='email' t-att-value='partner.email || ""'></input>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>Phone</span>
+                        <input class='detail client-phone' name='phone' type='tel' t-att-value='partner.phone || ""'></input>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>Barcode</span>
+                        <input class='detail barcode' name='barcode' t-att-value='partner.barcode || ""'></input>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="ClientListScreenWidget">
+        <t t-jquery=".client-list tr" t-operation="replace">
+            <tr>
+                <th>Name</th>
+                <th>NIT</th>
+                <th>Address</th>
+                <th>Phone</th>
+            </tr>
+        </t>
+    </t>
+
+    <t t-extend="ClientLine">
+        <t t-jquery=".client-line" t-operation="replace">
+            <tr class='client-line' t-att-data-id='partner.id'>
+                <td><t t-esc='partner.name' /></td>
+                <td><t t-esc='partner.vat' /></td>
+                <td><t t-esc='partner.address' /></td>
+                <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
+            </tr>
+        </t>
+    </t>
+
+</templates>

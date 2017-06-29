@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="reporte_cierre">
+            <t t-call="report.html_container">
+                <t t-call="report.internal_layout">
+                    <div class="page">
+                        <h2>Cierre de caja: <span t-esc="', '.join([x.name for x in docs])"/></h2>
+
+                        <h4>Total de ingresos</h4>
+
+                        <table class="table table-condensed mb32">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <strong>Diario</strong>
+                                    </th>
+                                    <th class="text-right">
+                                        <strong>Balance inicial</strong>
+                                    </th>
+                                    <th class="text-right">
+                                        <strong>Total de transacciones</strong>
+                                    </th>
+                                    <th class="text-right">
+                                        <strong>Balance final</strong>
+                                    </th>
+                                    <th class="text-right">
+                                        <strong>Diferencia</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="lineas_ingresos(docs)" t-as="linea">
+                                    <td><span t-esc="linea['diario'].name"/></td>
+                                    <td class="text-right">
+                                        <span t-esc="linea['balance_inicial']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="linea['total_ventas']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="linea['balance_final']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="linea['diferencia']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        <span t-esc="total_ingresos(docs)" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right"></td>
+                                    <td class="text-right"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Total de ventas:</h4>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Factura</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="lineas_ventas(docs)" t-as="order">
+                                    <td><span t-field="order.name"/></td>
+                                    <td><span t-field="order.date_order"/></td>
+                                    <td><span t-field="order.partner_id"/></td>
+                                    <td><span t-field="order.invoice_id.number"/></td>
+                                    <td class="text-right">
+                                        <span t-field="order.amount_total" t-field-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        <span t-esc="total_ventas(docs)" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
