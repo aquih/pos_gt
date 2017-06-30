@@ -3,10 +3,10 @@
 
     <t t-extend="NumpadWidget">
         <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
-            <button class="mode-button" disabled="1" data-mode='discount'>Disc</button>
+            <button t-attf-class="#{ widget.pos.config.permitir_descuento ? 'mode-button' : '' }" data-mode='discount'>Disc</button>
         </t>
         <t t-jquery=".mode-button[data-mode='price']" t-operation="replace">
-            <button class="mode-button" disabled="1" data-mode='price'>Price</button>
+            <button t-attf-class="#{ widget.pos.config.permitir_precio ? 'mode-button' : '' }" data-mode='price'>Price</button>
         </t>
     </t>
 
@@ -57,7 +57,7 @@
         <t t-jquery=".client-line" t-operation="replace">
             <tr class='client-line' t-att-data-id='partner.id'>
                 <td><t t-esc='partner.name' /></td>
-                <td><t t-esc='partner.vat' /></td>
+                <td><t t-esc='partner.vat or ""' /></td>
                 <td><t t-esc='partner.address' /></td>
                 <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
             </tr>
