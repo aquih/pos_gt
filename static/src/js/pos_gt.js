@@ -2,6 +2,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 "use strict";
 
 var screens = require('point_of_sale.screens');
+var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
 
 screens.ClientListScreenWidget.include({
@@ -20,6 +21,16 @@ screens.PaymentScreenWidget.include({
             this.click_invoice();
         }
         this._super();
+    }
+})
+
+var _super_posmodel = models.PosModel.prototype;
+models.PosModel = models.PosModel.extend({
+    add_new_order: function(){
+        var order = _super_posmodel.add_new_order.apply(this);
+        if (this.config.cliente_cf_id) {
+            order.set_client(this.db.get_partner_by_id(this.config.cliente_cf_id[0]))
+        }
     }
 })
 

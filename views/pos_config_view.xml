@@ -10,6 +10,7 @@
                 <field name="iface_display_categ_images" position="after">
                     <field name="permitir_descuento"/>
                     <field name="permitir_precio"/>
+                    <field name="cliente_cf_id"/>
                 </field>
             </field>
         </record>

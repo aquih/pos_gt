@@ -7,3 +7,4 @@ class PosConfig(models.Model):
 
     permitir_descuento = fields.Boolean(string="Permitir descuentos")
     permitir_precio = fields.Boolean(string="Permitir cambiar precio")
+    cliente_cf_id = fields.Many2one("res.partner", string="Cliente CF")
