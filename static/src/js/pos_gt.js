@@ -5,6 +5,35 @@ var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
 
+models.load_fields('product.product','extras_id');
+
+models.load_models({
+    model: 'pos_gt.extra',
+    fields: [],
+    loaded: function(self,extras){
+        var extras_by_id = {};
+        extras.forEach(function(e) {
+            extras_by_id[e.id] = e
+        })
+        self.product_extras = extras_by_id;
+    },
+});
+
+models.load_models({
+    model: 'pos_gt.extra.line',
+    fields: [],
+    loaded: function(self,extra_lines){
+        var extra_lines_by_id = {};
+        extra_lines.forEach(function(e) {
+            if (!(e.extra_id[0] in extra_lines_by_id)) {
+                extra_lines_by_id[e.extra_id[0]] = []
+            }
+            extra_lines_by_id[e.extra_id[0]].push(e)
+        })
+        self.product_extra_lines = extra_lines_by_id;
+    },
+});
+
 screens.ClientListScreenWidget.include({
     display_client_details: function(visibility,partner,clickpos){
         this._super(visibility,partner,clickpos);
@@ -27,9 +56,50 @@ screens.PaymentScreenWidget.include({
 var _super_posmodel = models.PosModel.prototype;
 models.PosModel = models.PosModel.extend({
     add_new_order: function(){
-        var order = _super_posmodel.add_new_order.apply(this);
+        var new_order = _super_posmodel.add_new_order.apply(this);
         if (this.config.cliente_cf_id) {
             order.set_client(this.db.get_partner_by_id(this.config.cliente_cf_id[0]))
+        }
+    }
+})
+
+var _super_order = models.Order.prototype;
+models.Order = models.Order.extend({
+    add_product: function(product, options){
+        var new_product = _super_order.add_product.apply(this,arguments);
+        var order  = this.pos.get_order();
+        var db = this.pos.db;
+        var gui = this.pos.gui;
+        if (product.extras_id && product.extras_id.length > 0) {
+            var extra = this.pos.product_extras[product.extras_id[0]];
+            if (extra) {
+                var extra_lines = this.pos.product_extra_lines[extra.id];
+                var list = [];
+
+                if (extra_lines) {
+                    extra_lines.forEach(function(line) {
+                        list.push({
+                            label: line.product_id[1],
+                            item: line,
+                        });
+                    })
+                }
+
+                this.pos.gui.show_popup('selection',{
+                    'title': 'Por favor seleccione',
+                    'list': list,
+                    'confirm': function(line){
+                        var extra_product = db.get_product_by_id(line.product_id[0]);
+                        var qty = 1;
+
+                        if (extra.operation == 'remove') {
+                            qty = -1
+                        }
+                        order.add_product(extra_product, {price: line.price_extra, quantity: qty});
+                        gui.close_popup();
+                    },
+                });
+            }
         }
     }
 })

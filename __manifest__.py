@@ -12,6 +12,7 @@
     'depends': ['point_of_sale'],
     'data': [
         'views/pos_config_view.xml',
+        'views/pos_extra_view.xml',
         'views/templates.xml',
         'views/reports.xml',
         'views/reporte_cierre.xml',

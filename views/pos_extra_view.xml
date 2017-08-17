@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="pos_gt_extra_form_view" model="ir.ui.view">
+            <field name="name">pos_gt.extra.form.view</field>
+            <field name="model">pos_gt.extra</field>
+            <field name="arch" type="xml">
+                <form string="POS Extra">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="operation"/>
+                            </group>
+                        </group>
+                        <field name="products_id">
+                            <tree string="Cashbox" editable="bottom">
+                                <field name="name"/>
+                                <field name="product_id" domain=""/>
+                                <field name="price_extra"/>
+                                <field name="company_currency_id"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="product_template_form_view_pos_gt" model="ir.ui.view">
+            <field name="name">product.template.form.inherit.pos_gt</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="point_of_sale.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="to_weight" position="after">
+                    <field name="extras_id" widget="many2many_tags"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="action_pos_gt_extra_form_view" model="ir.actions.act_window">
+            <field name="name">Extras</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos_gt.extra</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click para agregar productos extras.
+                </p><p>
+                    Los extras son productos que se pueden seleccionar en el
+                    punto de venta para acompañar otro producto.
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+            parent="point_of_sale.menu_point_config_product"
+            action="action_pos_gt_extra_form_view"
+            id="menu_pos_gt_extra"
+            sequence="35"
+            groups="point_of_sale.group_pos_manager" />
+
+    </data>
+</openerp>
