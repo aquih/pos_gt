@@ -57,8 +57,8 @@ var _super_posmodel = models.PosModel.prototype;
 models.PosModel = models.PosModel.extend({
     add_new_order: function(){
         var new_order = _super_posmodel.add_new_order.apply(this);
-        if (this.config.cliente_cf_id) {
-            order.set_client(this.db.get_partner_by_id(this.config.cliente_cf_id[0]))
+        if (this.config.default_client_id) {
+            order.set_client(this.db.get_partner_by_id(this.config.default_client_id[0]))
         }
     }
 })

@@ -8,9 +8,10 @@
             <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
             <field name="arch" type="xml">
                 <field name="iface_display_categ_images" position="after">
-                    <field name="permitir_descuento"/>
-                    <field name="permitir_precio"/>
-                    <field name="cliente_cf_id"/>
+                    <field name="allow_discount"/>
+                    <field name="allow_price_change"/>
+                    <field name="default_client_id"/>
+                    <field name="analytic_account_id"/>
                 </field>
             </field>
         </record>

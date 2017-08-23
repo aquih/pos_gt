@@ -3,10 +3,10 @@
 
     <t t-extend="NumpadWidget">
         <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
-            <button t-attf-class="#{ widget.pos.config.permitir_descuento ? 'mode-button' : '' }" data-mode='discount'>Disc</button>
+            <button t-attf-class="#{ widget.pos.config.allow_discount ? 'mode-button' : '' }" data-mode='discount'>Disc</button>
         </t>
         <t t-jquery=".mode-button[data-mode='price']" t-operation="replace">
-            <button t-attf-class="#{ widget.pos.config.permitir_precio ? 'mode-button' : '' }" data-mode='price'>Price</button>
+            <button t-attf-class="#{ widget.pos.config.allow_price_change ? 'mode-button' : '' }" data-mode='price'>Price</button>
         </t>
     </t>
 
