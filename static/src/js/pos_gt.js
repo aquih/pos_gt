@@ -70,12 +70,14 @@ models.Order = models.Order.extend({
         var order  = this.pos.get_order();
         var db = this.pos.db;
         var gui = this.pos.gui;
+        var extras_db = this.pos.product_extras;
+        var extra_lines_db = this.pos.product_extra_lines;
         if (product.extras_id && product.extras_id.length > 0) {
-            var extra = this.pos.product_extras[product.extras_id[0]];
-            if (extra) {
-                var extra_lines = this.pos.product_extra_lines[extra.id];
-                var list = [];
+            product.extras_id.forEach(function(extra_id) {
+                var extra = extras_db[extra_id];
+                var extra_lines = extra_lines_db[extra_id];
 
+                var list = [];
                 if (extra_lines) {
                     extra_lines.forEach(function(line) {
                         list.push({
@@ -85,7 +87,7 @@ models.Order = models.Order.extend({
                     })
                 }
 
-                this.pos.gui.show_popup('selection',{
+                gui.show_popup('selection',{
                     'title': 'Por favor seleccione',
                     'list': list,
                     'confirm': function(line){
@@ -96,10 +98,13 @@ models.Order = models.Order.extend({
                             qty = -1
                         }
                         order.add_product(extra_product, {price: line.price_extra, quantity: qty});
-                        gui.close_popup();
+
+                        if (extra.type == 'one') {
+                            gui.close_popup();
+                        }
                     },
                 });
-            }
+            })
         }
     }
 })

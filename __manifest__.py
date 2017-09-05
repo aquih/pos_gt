@@ -13,9 +13,11 @@
     'data': [
         'views/pos_config_view.xml',
         'views/pos_extra_view.xml',
+        'views/res_users_view.xml',
         'views/templates.xml',
         'views/reports.xml',
         'views/reporte_cierre.xml',
+        'security/pos_gt_security.xml',
     ],
     'qweb': [
         'static/src/xml/pos_gt.xml',

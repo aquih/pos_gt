@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="res_users_form_view_gt" model="ir.ui.view">
+            <field name="name">res.users.form.view.pos_gt</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="point_of_sale.res_users_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="pos_security_pin" position="after">
+                        <field name="default_pos_id"/>
+                        <field name="default_location_id"/>
+                        <field name="default_analytic_account_id"/>
+                    </field>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>
