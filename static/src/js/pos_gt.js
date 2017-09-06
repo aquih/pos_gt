@@ -24,8 +24,6 @@ models.load_models({
     loaded: function(self,addresses){
         if (addresses.length > 0) {
             self.sale_journal_address = addresses[0];
-            console.log(self.sale_journal);
-            console.log(self.sale_journal_address);
         }
     },
 });
