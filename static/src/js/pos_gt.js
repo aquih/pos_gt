@@ -5,6 +5,31 @@ var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
 
+models.load_models({
+    model: 'account.journal',
+    fields: [],
+    domain: function(self){ return [['id','=',self.config.journal_id[0]]]; },
+    loaded: function(self,journals){
+        if (journals.length > 0) {
+            self.sale_journal = journals[0];
+        }
+    },
+});
+
+models.load_models({
+    model: 'res.partner',
+    fields: [],
+    domain: function(self){ return [['id','=',self.sale_journal.direccion[0]]]; },
+    condition: function(self){ return self.sale_journal.direccion; },
+    loaded: function(self,addresses){
+        if (addresses.length > 0) {
+            self.sale_journal_address = addresses[0];
+            console.log(self.sale_journal);
+            console.log(self.sale_journal_address);
+        }
+    },
+});
+
 models.load_fields('product.product','extras_id');
 
 models.load_models({
