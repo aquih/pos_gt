@@ -57,6 +57,56 @@ models.load_models({
     },
 });
 
+var TagNumberButton = screens.ActionButtonWidget.extend({
+    template: 'TagNumberButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        this.gui.show_popup('number',{
+            'title': 'Etiqueta',
+            'value': 1,
+            'confirm': function(val) {
+                order.tag_number = val;
+                self.renderElement();
+            },
+        });
+    },
+});
+
+screens.define_action_button({
+    'name': 'tag_number',
+    'widget': TagNumberButton,
+    'condition': function(){
+        return this.pos.config.ask_tag_number;
+    },
+});
+
+var TakeOutButton = screens.ActionButtonWidget.extend({
+    template: 'TakeOutButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        order.take_out = !order.take_out;
+        this.renderElement();
+    },
+});
+
+screens.define_action_button({
+    'name': 'take_out',
+    'widget': TakeOutButton,
+    'condition': function(){
+        return this.pos.config.takeout_option;
+    },
+});
+
 screens.ClientListScreenWidget.include({
     display_client_details: function(visibility,partner,clickpos){
         this._super(visibility,partner,clickpos);
