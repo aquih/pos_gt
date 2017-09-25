@@ -17,6 +17,7 @@
         'views/templates.xml',
         'views/reports.xml',
         'views/reporte_cierre.xml',
+        'views/pos_order_report_view.xml',
         'security/pos_gt_security.xml',
     ],
     'qweb': [

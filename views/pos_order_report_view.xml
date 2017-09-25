@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="view_report_pos_order_search_pos_gt" model="ir.ui.view">
+            <field name="name">report.pos.order.search_pos_gt</field>
+            <field name="model">report.pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
+            <field name="arch" type="xml">
+                <filter name="year" position="after">
+                    <filter string="Hoy" name="today" domain="[('date','&lt;=', time.strftime('%%Y-%%m-%%d')+'+1'),('date','&gt;=',time.strftime('%%Y-%%m-%%d'))]" help="POS ordered created during current day"/>
+                </filter>
+            </field>
+        </record>
+</odoo>
