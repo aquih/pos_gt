@@ -112,7 +112,9 @@ screens.ClientListScreenWidget.include({
         this._super(visibility,partner,clickpos);
         if (visibility === 'edit') {
             var vat = this.$('.screen-content input').val();
-            this.$('.vat').val(vat);
+            if (this.$('.vat').val().trim() == '') {
+                this.$('.vat').val(vat);
+            }
         };
     }
 })
