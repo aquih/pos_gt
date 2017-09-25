@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
-
-        <record id="view_pos_config_form_pos_gt" model="ir.ui.view">
-            <field name="name">pos.config.form.view_pos_gt</field>
-            <field name="model">pos.config</field>
-            <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
-            <field name="arch" type="xml">
-                <field name="iface_display_categ_images" position="after">
-                    <field name="allow_discount"/>
-                    <field name="allow_price_change"/>
-                    <field name="ask_tag_number"/>
-                    <field name="takeout_option"/>
-                    <field name="default_client_id"/>
-                    <field name="analytic_account_id"/>
-                </field>
+<odoo>
+    <record id="view_pos_config_form_pos_gt" model="ir.ui.view">
+        <field name="name">pos.config.form.view_pos_gt</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
+        <field name="arch" type="xml">
+            <field name="iface_display_categ_images" position="after">
+                <field name="allow_discount"/>
+                <field name="allow_price_change"/>
+                <field name="ask_tag_number"/>
+                <field name="takeout_option"/>
+                <field name="default_client_id"/>
+                <field name="analytic_account_id"/>
             </field>
-        </record>
-
-    </data>
-</openerp>
+        </field>
+    </record>
+</odoo>

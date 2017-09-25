@@ -5,7 +5,7 @@ from openerp import models, fields, api, _
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
-    def _confirm_oorders(self):
+    def _confirm_orders(self):
         res = super(PosSession, self)._confirm_orders()
         for session in self:
             for order in session.order_ids.filtered(lambda order: order.state == 'invoiced'):
