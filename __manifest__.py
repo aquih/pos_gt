@@ -18,6 +18,7 @@
         'views/reports.xml',
         'views/reporte_cierre.xml',
         'security/pos_gt_security.xml',
+        'security/ir.model.access.csv',
     ],
     'qweb': [
         'static/src/xml/pos_gt.xml',
