@@ -148,38 +148,34 @@ models.Order = models.Order.extend({
         var extras_db = this.pos.product_extras;
         var extra_lines_db = this.pos.product_extra_lines;
         if (product.extras_id && product.extras_id.length > 0) {
+
+            var list = [];
             product.extras_id.forEach(function(extra_id) {
                 var extra = extras_db[extra_id];
                 var extra_lines = extra_lines_db[extra_id];
 
-                var list = [];
                 if (extra_lines) {
                     extra_lines.forEach(function(line) {
+                        line.type = extra.type;
                         list.push({
-                            label: line.product_id[1],
+                            label: line.name + " ( "+line.qty+" )",
                             item: line,
                         });
                     })
                 }
-
-                gui.show_popup('selection',{
-                    'title': 'Por favor seleccione',
-                    'list': list,
-                    'confirm': function(line){
-                        var extra_product = db.get_product_by_id(line.product_id[0]);
-                        var qty = 1;
-
-                        if (extra.operation == 'remove') {
-                            qty = -1
-                        }
-                        order.add_product(extra_product, {price: line.price_extra, quantity: qty});
-
-                        if (extra.type == 'one') {
-                            gui.close_popup();
-                        }
-                    },
-                });
             })
+
+            gui.show_popup('selection', {
+                'title': 'Por favor seleccione',
+                'list': list,
+                'confirm': function(line) {
+                    var extra_product = db.get_product_by_id(line.product_id[0]);
+                    order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type } });
+                    if (product.extras_id.length == 1) {
+                        gui.close_popup();
+                    }
+                },
+            });
         }
     }
 })
