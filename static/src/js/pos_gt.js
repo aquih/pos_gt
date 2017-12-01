@@ -184,9 +184,11 @@ models.Order = models.Order.extend({
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
     set_quantity: function(quantity){
-        _super_line.set_quantity.apply(this,arguments);
-
+        if (this.extra_type && this.extra_type == "fixed") {
+            quantity = "remove"
+        }
         console.log(this);
+        _super_line.set_quantity.apply(this,arguments);
     }
 })
 
