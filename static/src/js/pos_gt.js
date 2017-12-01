@@ -141,7 +141,7 @@ models.PosModel = models.PosModel.extend({
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
     add_product: function(product, options){
-        if ('extras' in options) {
+        if (options && 'extras' in options) {
             options['extras']['extra_type'] = line.type;
         } else {
             options['extras'] = { extra_type: line.type };
