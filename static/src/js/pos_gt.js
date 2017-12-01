@@ -181,10 +181,10 @@ models.Order = models.Order.extend({
     }
 })
 
-var _super_order = models.Orderline.prototype;
+var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
     set_quantity: function(quantity){
-        _super_order.set_quantity.apply(this,arguments);
+        _super_line.set_quantity.apply(this,arguments);
 
         console.log(this);
     }
