@@ -141,7 +141,13 @@ models.PosModel = models.PosModel.extend({
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
     add_product: function(product, options){
-        var new_product = _super_order.add_product.apply(this,arguments);
+        if ('extras' in options) {
+            options['extras']['extra_type'] = line.type;
+        } else {
+            options['extras'] = { extra_type: line.type };
+        }
+        var new_line = _super_order.add_product.apply(this,arguments);
+
         var order  = this.pos.get_order();
         var db = this.pos.db;
         var gui = this.pos.gui;
@@ -177,6 +183,15 @@ models.Order = models.Order.extend({
                 },
             });
         }
+    }
+})
+
+var _super_order = models.Orderline.prototype;
+models.Orderline = models.Orderline.extend({
+    set_quantity: function(quantity){
+        _super_order.set_quantity.apply(this,arguments);
+
+        console.log(this);
     }
 })
 
