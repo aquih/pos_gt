@@ -209,9 +209,10 @@ models.Orderline = models.Orderline.extend({
                 to_remove.forEach(function(l) {
                     order.remove_orderline(l);
                 });
+                order.remove_orderline(line);
+            } else {
+                _super_line.set_quantity.apply(this,arguments);
             }
-
-            _super_line.set_quantity.apply(this,arguments);
         }
     }
 })
