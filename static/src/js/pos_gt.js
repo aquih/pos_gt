@@ -197,13 +197,13 @@ models.Orderline = models.Orderline.extend({
                 if (l.parent_line && l.parent_line.id == this.id) {
                     to_remove.push(l);
                 }
-            })
+            });
 
             if (to_remove.length > 0) {
                 quantity = "remove";
                 to_remove.forEach(function(l) {
                     this.order.remove_orderline(l);
-                }
+                });
             }
 
             _super_line.set_quantity.apply(this,arguments);
