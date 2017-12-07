@@ -185,7 +185,9 @@ models.Order = models.Order.extend({
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
     set_quantity: function(quantity){
-        if (this.extra_type && this.extra_type == "fixed") {
+        var line = this;
+        var order = this.pos.get_order();
+        if (line.extra_type && line.extra_type == "fixed") {
             this.pos.gui.show_popup("error",{
                 "title": "Parte de combo",
                 "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
@@ -193,8 +195,8 @@ models.Orderline = models.Orderline.extend({
         } else {
 
             var to_remove = []
-            this.order.get_orderlines().forEach(function(l) {
-                if (l.parent_line && l.parent_line.id == this.id) {
+            order.get_orderlines().forEach(function(l) {
+                if (l.parent_line && l.parent_line.id == line.id) {
                     to_remove.push(l);
                 }
             });
@@ -202,7 +204,7 @@ models.Orderline = models.Orderline.extend({
             if (to_remove.length > 0) {
                 quantity = "remove";
                 to_remove.forEach(function(l) {
-                    this.order.remove_orderline(l);
+                    order.remove_orderline(l);
                 });
             }
 
