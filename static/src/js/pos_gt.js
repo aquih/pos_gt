@@ -204,6 +204,12 @@ models.Orderline = models.Orderline.extend({
                 }
             });
 
+            if (to_remove.length > 0) {
+                quantity = "remove";
+                to_remove.forEach(function(l) {
+                    order.remove_orderline(l);
+                });
+            }
 
             _super_line.set_quantity.apply(this,arguments);
         }
