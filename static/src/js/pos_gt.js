@@ -171,7 +171,7 @@ models.Order = models.Order.extend({
                 'list': list,
                 'confirm': function(line) {
                     var extra_product = db.get_product_by_id(line.product_id[0]);
-                    order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type } });
+                    order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
                     if (product.extras_id.length == 1) {
                         gui.close_popup();
                     }
@@ -184,11 +184,15 @@ models.Order = models.Order.extend({
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
     set_quantity: function(quantity){
-        if (this.extra_type && this.extra_type == "fixed") {
-            quantity = "remove"
-        }
         console.log(this);
-        _super_line.set_quantity.apply(this,arguments);
+        if (this.extra_type && this.extra_type == "fixed") {
+            this.gui.show_popup('error',{
+                'title': 'Parte de combo',
+                'body':  'Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo.',
+            });
+        } else {
+            _super_line.set_quantity.apply(this,arguments);
+        }
     }
 })
 
