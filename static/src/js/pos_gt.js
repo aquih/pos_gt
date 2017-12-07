@@ -197,7 +197,13 @@ models.Orderline = models.Orderline.extend({
 
         } else {
 
-            
+            var to_remove = [];
+            order.get_orderlines().forEach(function(l) {
+                if (l.parent_line && l.parent_line.id == line.id) {
+                    to_remove.push(l);
+                }
+            });
+
 
             _super_line.set_quantity.apply(this,arguments);
         }
