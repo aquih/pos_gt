@@ -144,7 +144,6 @@ models.Order = models.Order.extend({
         _super_order.add_product.apply(this,arguments);
 
         var new_line = this.get_last_orderline();
-        console.log(new_line);
         var order = this.pos.get_order();
         var db = this.pos.db;
         var gui = this.pos.gui;
@@ -187,11 +186,26 @@ var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
     set_quantity: function(quantity){
         if (this.extra_type && this.extra_type == "fixed") {
-            this.pos.gui.show_popup('error',{
-                'title': 'Parte de combo',
-                'body':  'Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.',
+            this.pos.gui.show_popup("error",{
+                "title": "Parte de combo",
+                "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
             });
         } else {
+
+            var to_remove = []
+            this.order.get_orderlines().forEach(function(l) {
+                if (l.parent_line && l.parent_line.id == this.id) {
+                    to_remove.push(l);
+                }
+            })
+
+            if (to_remove.length > 0) {
+                quantity = "remove";
+                to_remove.forEach(function(l) {
+                    this.order.remove_orderline(l);
+                }
+            }
+
             _super_line.set_quantity.apply(this,arguments);
         }
     }
