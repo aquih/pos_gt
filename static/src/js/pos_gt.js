@@ -186,7 +186,7 @@ models.Orderline = models.Orderline.extend({
     set_quantity: function(quantity){
         console.log(this);
         if (this.extra_type && this.extra_type == "fixed") {
-            this.gui.show_popup('error',{
+            this.pos.gui.show_popup('error',{
                 'title': 'Parte de combo',
                 'body':  'Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo.',
             });
