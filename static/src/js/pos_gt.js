@@ -205,6 +205,7 @@ models.Orderline = models.Orderline.extend({
                 }
             });
 
+            // Si se trata de modificar una linea padre, se borra.
             if (to_remove.length > 0) {
                 to_remove.forEach(function(l) {
                     order.remove_orderline(l);
