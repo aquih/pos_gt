@@ -188,30 +188,32 @@ models.Orderline = models.Orderline.extend({
         var line = this;
         var order = this.pos.get_order();
 
-        if (line.extra_type && line.extra_type == "fixed") {
+        if (line && order) {
+            if (line.extra_type && line.extra_type == "fixed") {
 
-            this.pos.gui.show_popup("error",{
-                "title": "Parte de combo",
-                "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
-            });
-
-        } else {
-
-            var to_remove = [];
-            order.get_orderlines().forEach(function(l) {
-                if (l.parent_line && l.parent_line.id == line.id) {
-                    to_remove.push(l);
-                }
-            });
-
-            if (to_remove.length > 0) {
-                quantity = "remove";
-                to_remove.forEach(function(l) {
-                    order.remove_orderline(l);
+                this.pos.gui.show_popup("error",{
+                    "title": "Parte de combo",
+                    "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
                 });
-                order.remove_orderline(line);
+
             } else {
-                _super_line.set_quantity.apply(this,arguments);
+
+                var to_remove = [];
+                order.get_orderlines().forEach(function(l) {
+                    if (l.parent_line && l.parent_line.id == line.id) {
+                        to_remove.push(l);
+                    }
+                });
+
+                if (to_remove.length > 0) {
+                    quantity = "remove";
+                    to_remove.forEach(function(l) {
+                        order.remove_orderline(l);
+                    });
+                    order.remove_orderline(line);
+                } else {
+                    _super_line.set_quantity.apply(this,arguments);
+                }
             }
         }
     }
