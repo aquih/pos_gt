@@ -188,30 +188,35 @@ models.Orderline = models.Orderline.extend({
         var line = this;
         var order = this.pos.get_order();
 
-        if (line.extra_type && line.extra_type == "fixed") {
+        if (line && order) {
 
-            this.pos.gui.show_popup("error",{
-                "title": "Parte de combo",
-                "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
-            });
+            // Si se trata de modificar la linea extra y esta no se puede modificar
+            if (line.extra_type && line.extra_type == "fixed") {
 
-        } else {
-
-            var to_remove = [];
-            order.get_orderlines().forEach(function(l) {
-                if (l.parent_line && l.parent_line.id == line.id) {
-                    to_remove.push(l);
-                }
-            });
-
-            if (to_remove.length > 0) {
-                quantity = "remove";
-                to_remove.forEach(function(l) {
-                    order.remove_orderline(l);
+                this.pos.gui.show_popup("error",{
+                    "title": "Parte de combo",
+                    "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
                 });
-                order.remove_orderline(line);
+
             } else {
-                _super_line.set_quantity.apply(this,arguments);
+
+                var to_remove = [];
+                order.get_orderlines().forEach(function(l) {
+                    if (l.parent_line && l.parent_line.id == line.id) {
+                        to_remove.push(l);
+                    }
+                });
+
+                // Si se trata de modificar una linea padre, se borra.
+                if (to_remove.length > 0) {
+                    to_remove.forEach(function(l) {
+                        order.remove_orderline(l);
+                    });
+                    order.remove_orderline(line);
+                } else {
+                    _super_line.set_quantity.apply(this,arguments);
+                }
+
             }
         }
     }
