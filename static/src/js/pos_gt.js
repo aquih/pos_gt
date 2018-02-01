@@ -189,6 +189,8 @@ models.Orderline = models.Orderline.extend({
         var order = this.pos.get_order();
 
         if (line && order) {
+
+            // Si se trata de modificar la linea extra y esta no se puede modificar
             if (line.extra_type && line.extra_type == "fixed") {
 
                 this.pos.gui.show_popup("error",{
@@ -205,8 +207,8 @@ models.Orderline = models.Orderline.extend({
                     }
                 });
 
+                // Si se trata de modificar una linea padre, se borra.
                 if (to_remove.length > 0) {
-                    quantity = "remove";
                     to_remove.forEach(function(l) {
                         order.remove_orderline(l);
                     });
@@ -214,6 +216,7 @@ models.Orderline = models.Orderline.extend({
                 } else {
                     _super_line.set_quantity.apply(this,arguments);
                 }
+
             }
         }
     }
