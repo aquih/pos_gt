@@ -218,6 +218,8 @@ models.Orderline = models.Orderline.extend({
                 }
 
             }
+        } else {
+            _super_line.set_quantity.apply(this,arguments);
         }
     }
 })

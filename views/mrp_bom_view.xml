@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_bom_form_view_pos_gt" model="ir.ui.view">
+        <field name="name">mrp.bom.form_pos_gt</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Extras">
+                    <field name="bom_extra_ids" widget="one2many_list">
+                        <tree string="Extras" editable="bottom">
+                            <field name="name"/>
+                            <field name="product_id" context="{'default_type': 'product'}"/>
+                            <field name="product_qty"/>
+                            <field name="product_uom_id" options="{'no_open':True,'no_create':True}" groups="product.group_uom"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>
