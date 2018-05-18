@@ -1,3 +1,3 @@
 # -*- encoding: utf-8 -*-
 
-import reporte_cierre
+from . import reporte_cierre

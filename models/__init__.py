@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import pos_config
-import pos_extra
-import pos_order
-import pos_session
-import res_users
-import mrp_bom
+from . import pos_config
+from . import pos_extra
+from . import pos_order
+from . import pos_session
+from . import res_users
+from . import mrp_bom
