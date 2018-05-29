@@ -13,5 +13,6 @@ class PosSession(models.Model):
                 if invoice:
                     lines_to_reconcile = self.env['account.move.line']
                     for statement in order.statement_ids:
-                        lines_to_reconcile += statement.journal_entry_ids.line_ids.filtered(lambda r: not r.reconciled and r.account_id.internal_type in ('payable', 'receivable'))
+                        for sline in statement.line_ids:
+                            lines_to_reconcile += sline.journal_entry_ids.filtered(lambda r: not r.reconciled and r.account_id.internal_type in ('payable', 'receivable'))
                     invoice.register_payment(lines_to_reconcile)
