@@ -140,8 +140,39 @@ models.PosModel = models.PosModel.extend({
 
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
-    add_product: function(product, options){
-        _super_order.add_product.apply(this,arguments);
+
+    add_product: function(product, options) {
+        if (options) {
+            options.merge = false;
+        } else {
+            options = { 'merge': false };
+        }
+
+        function show_extras_popup(current_list) {
+
+            if (gui.has_popup()) {
+                console.log("Esperando");
+                setTimeout(function(){
+                    show_extras_popup(current_list)
+                }, 800)
+                return;
+            }
+
+            var list = current_list.pop();
+            if (list) {
+                gui.show_popup('selection', {
+                    'title': 'Extras',
+                    'list': list,
+                    'confirm': function(line) {
+                        var extra_product = db.get_product_by_id(line.product_id[0]);
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
+                        show_extras_popup(current_list);
+                    },
+                });
+            }
+        }
+
+        _super_order.add_product.apply(this, [product, options]);
 
         var new_line = this.get_last_orderline();
         var order = this.pos.get_order();
@@ -151,12 +182,13 @@ models.Order = models.Order.extend({
         var extra_lines_db = this.pos.product_extra_lines;
         if (product.extras_id && product.extras_id.length > 0) {
 
-            var list = [];
+            var extra_lists = [];
             product.extras_id.forEach(function(extra_id) {
                 var extra = extras_db[extra_id];
                 var extra_lines = extra_lines_db[extra_id];
 
                 if (extra_lines) {
+                    var list = []
                     extra_lines.forEach(function(line) {
                         line.type = extra.type;
                         list.push({
@@ -164,20 +196,12 @@ models.Order = models.Order.extend({
                             item: line,
                         });
                     })
+                    extra_lists.push(list);
                 }
             })
 
-            gui.show_popup('selection', {
-                'title': 'Por favor seleccione',
-                'list': list,
-                'confirm': function(line) {
-                    var extra_product = db.get_product_by_id(line.product_id[0]);
-                    order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
-                    if (product.extras_id.length == 1) {
-                        gui.close_popup();
-                    }
-                },
-            });
+            show_extras_popup(extra_lists);
+
         }
     }
 })
@@ -188,10 +212,17 @@ models.Orderline = models.Orderline.extend({
         var line = this;
         var order = this.pos.get_order();
 
-        if (line && order) {
+        if (line && order && order.get_orderlines()) {
+
+            var to_remove = [];
+            order.get_orderlines().forEach(function(l) {
+                if (l.parent_line && l.parent_line.id == line.id) {
+                    to_remove.push(l);
+                }
+            });
 
             // Si se trata de modificar la linea extra y esta no se puede modificar
-            if (line.extra_type && line.extra_type == "fixed") {
+            if (line.extra_type && line.extra_type == "fixed" && to_remove.length > 0) {
 
                 this.pos.gui.show_popup("error",{
                     "title": "Parte de combo",
@@ -199,13 +230,6 @@ models.Orderline = models.Orderline.extend({
                 });
 
             } else {
-
-                var to_remove = [];
-                order.get_orderlines().forEach(function(l) {
-                    if (l.parent_line && l.parent_line.id == line.id) {
-                        to_remove.push(l);
-                    }
-                });
 
                 // Si se trata de modificar una linea padre, se borra.
                 if (to_remove.length > 0) {

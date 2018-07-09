@@ -3,10 +3,10 @@
 
     <t t-name="TagNumberButton">
         <div class='control-button js_tag_number'>
-            <t t-if="widget.pos.get_order().tag_number">
+            <t t-if="widget.pos.get_order() &amp;&amp; widget.pos.get_order().tag_number">
                 <i class='fa fa-tag' /> <t t-esc="widget.pos.get_order().tag_number" />
             </t>
-            <t t-if="!widget.pos.get_order().tag_number">
+            <t t-if="widget.pos.get_order() &amp;&amp; !widget.pos.get_order().tag_number">
                 <i class='fa fa-tag' /> Etiqueta
             </t>
         </div>
@@ -14,10 +14,10 @@
 
     <t t-name="TakeOutButton">
         <div class='control-button js_take_out'>
-            <t t-if="widget.pos.get_order().take_out">
+            <t t-if="widget.pos.get_order() &amp;&amp; widget.pos.get_order().take_out">
                 <i class='fa fa-shopping-bag' /> Llevar
             </t>
-            <t t-if="!widget.pos.get_order().take_out">
+            <t t-if="widget.pos.get_order() &amp;&amp; !widget.pos.get_order().take_out">
                 <i class='fa fa-shopping-bag' /> Restaurante
             </t>
         </div>

@@ -5,8 +5,10 @@ import odoo.addons.decimal_precision as dp
 
 class PosGTExtra(models.Model):
     _name = "pos_gt.extra"
+    _order = "sequence"
 
     name = fields.Char(string="Nombre", required=True)
+    sequence = fields.Integer(help="Orden para solicitar los extras")
     company_id = fields.Many2one("res.company", string="Company", required=True, default=lambda self: self.env.user.company_id)
     type = fields.Selection(default="fixed", string="Tipo", required=True, selection=[("fixed", "No se puede cambiar cantidad"), ("variable", "Si se puede cambiar cantidad")])
     products_id = fields.One2many("pos_gt.extra.line", "extra_id", string="Lineas")
