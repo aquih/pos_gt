@@ -23,6 +23,24 @@
         </div>
     </t>
 
+    <t t-name="LoadOrderButton">
+        <div class='control-button js_load_order'>
+            <i class='fa fa-shopping-bag' /> Cargar
+        </div>
+    </t>
+
+    <t t-name="SaveOrderButton">
+        <div class='control-button js_save_order'>
+            <i class='fa fa-shopping-bag' /> Guardar
+        </div>
+    </t>
+
+    <t t-name="LoadOrderSessionButton">
+        <div class='control-button js_load_order_session'>
+            <i class='fa fa-shopping-bag' /> Cargar sesion
+        </div>
+    </t>
+
     <t t-extend="NumpadWidget">
         <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
             <button t-attf-class="#{ widget.pos.config.allow_discount ? 'mode-button' : '' }" data-mode='discount'>Disc</button>
