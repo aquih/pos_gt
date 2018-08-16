@@ -23,6 +23,17 @@
         </div>
     </t>
 
+    <t t-name="RecetasButton">
+        <div class='control-button js_recetas'>
+            <t t-if="widget.pos.get_order().recetas">
+                <i class='fa fa-shopping-bag' /> Recetas
+            </t>
+            <t t-if="!widget.pos.get_order().recetas">
+                <i class='fa fa-shopping-bag' /> Recetas
+            </t>
+        </div>
+    </t>
+
     <t t-extend="NumpadWidget">
         <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
             <button t-attf-class="#{ widget.pos.config.allow_discount ? 'mode-button' : '' }" data-mode='discount'>Disc</button>

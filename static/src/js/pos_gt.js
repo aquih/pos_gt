@@ -4,6 +4,8 @@ odoo.define('pos_gt.pos_gt', function (require) {
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
+var gui = require('point_of_sale.gui');
+var Model = require('web.DataModel');
 
 models.load_models({
     model: 'account.journal',
@@ -104,6 +106,60 @@ screens.define_action_button({
     'widget': TakeOutButton,
     'condition': function(){
         return this.pos.config.takeout_option;
+    },
+});
+
+var RecetasButton = screens.ActionButtonWidget.extend({
+    template: 'RecetasButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        var Producto = new Model('product.template');
+        var Receta = new Model('mrp.bom');
+        var producto = order.get_selected_orderline().product.product_tmpl_id;
+        Receta.query(['id','product_tmpl_id','code'])
+         .filter([['product_tmpl_id', '=', producto]])
+         .limit(1000)
+         .all().then(function (receta) {
+            if(receta.length > 0){
+                var ProductosRecetas = new Model('mrp.bom.line');
+                ProductosRecetas.query(['id','product_id','product_uom_id','product_qty'])
+                     .filter([['bom_id', '=', receta[0].id]])
+                     .limit(1000)
+                     .all().then(function (receta) {
+                        for (var i=0; i < receta.length; i++){
+                            receta[i]['label'] = receta[i].product_id[1] +' '+ 'Cantidad: '+receta[i].product_qty+ ' ' +receta[i].product_uom_id[1]   
+                            receta[i]['item'] = receta[i].id
+                        }
+                        self.mostrar_receta(receta);
+                });
+            }
+
+        });
+        order.recetas = !order.recetas;
+        this.renderElement();
+    },
+
+    mostrar_receta: function(productos){
+        var self = this;
+        this.gui.show_popup('selection', {
+            'title': 'Receta',
+            'list': productos,
+            'confirm': function(producto) {
+            },
+        });
+    },
+});
+
+screens.define_action_button({
+    'name': 'recetas',
+    'widget': RecetasButton,
+    'condition': function(){
+        return this.pos.config.opcion_recetas;
     },
 });
 

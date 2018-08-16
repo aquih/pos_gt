@@ -11,3 +11,4 @@ class PosConfig(models.Model):
     takeout_option = fields.Boolean(string="Opción Para Llevar")
     default_client_id = fields.Many2one("res.partner", string="Cliente CF")
     analytic_account_id = fields.Many2one("account.analytic.account", string="Cuenta Analítica")
+    opcion_recetas = fields.Boolean(string="Opción Para Ver Recetas")
