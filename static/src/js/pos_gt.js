@@ -587,6 +587,63 @@ screens.define_action_button({
     },
 });
 
+
+var RecetasButton = screens.ActionButtonWidget.extend({
+    template: 'RecetasButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        var gui = this.pos.gui;
+        var producto = order.get_selected_orderline().product.product_tmpl_id;
+        rpc.query({
+                model: 'mrp.bom',
+                method: 'search_read',
+                args: [[['product_tmpl_id', '=', producto]] , ['id','product_tmpl_id','code']],
+            })
+            .then(function (receta){
+                if(receta.length > 0){
+                    rpc.query({
+                            model: 'mrp.bom.line',
+                            method: 'search_read',
+                            args: [[['bom_id', '=', receta[0].id]] , ['id','product_id','product_uom_id','product_qty']],
+                        })
+                        .then(function (productos){
+                            for (var i=0; i < productos.length; i++){
+                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]   
+                                productos[i]['item'] = productos[i].id
+                            }
+                            self.mostrar_receta(productos);
+
+                        });
+                }
+            });
+        order.recetas = !order.recetas;
+        this.renderElement();
+    },
+    mostrar_receta: function(productos){
+        var self = this;
+        var gui = this.pos.gui;
+        this.gui.show_popup('selection',{
+            'title': 'Receta',
+            'list': productos,
+            'confirm': function(val) {
+            },
+        });
+    },
+});
+
+screens.define_action_button({
+    'name': 'recetas',
+    'widget': RecetasButton,
+    'condition': function(){
+        return this.pos.config.opcion_recetas;
+    },
+});
+
 screens.ClientListScreenWidget.include({
     display_client_details: function(visibility,partner,clickpos){
         this._super(visibility,partner,clickpos);
