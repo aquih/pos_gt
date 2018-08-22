@@ -18,26 +18,26 @@ class PosOrder(models.Model):
         res = super(PosOrder, self)._force_picking_done(picking)
 
     def guardar_pedido_session_alterna(self,orden,orderline):
-        orden_id = self.env['pos.order'].create(orden[0])
+        orden_id = self.env['pos.order'].sudo().create(orden[0])
         for linea in orderline[0]:
             linea['order_id'] = orden_id.id
-            linea_id = self.env['pos.order.line'].create(linea)
+            linea_id = self.env['pos.order.line'].sudo().create(linea)
         return False
 
     def actualizar_pedido(self,orden_id,orden,orderline,restaurante):
         orders = self.env['pos.order'].search([['id', '=', orden_id]])
         logging.warn(restaurante)
         if restaurante[0]:
-            for order in orders: 
-                order.write({'partner_id': orden[0]['partner_id'], 'user_id':orden[0]['user_id'],'customer_count': orden[0]['customer_count']})
+            for order in orders:
+                order.sudo().write({'partner_id': orden[0]['partner_id'], 'user_id':orden[0]['user_id'],'customer_count': orden[0]['customer_count']})
         else:
-            for order in orders: 
-                order.write({'partner_id': orden[0]['partner_id'], 'user_id':orden[0]['user_id']})            
+            for order in orders:
+                order.sudo().write({'partner_id': orden[0]['partner_id'], 'user_id':orden[0]['user_id']})
         lineas = self.env['pos.order.line'].search([['order_id', 'in', orden_id]])
-        lineas.unlink()
+        lineas.sudo().unlink()
         for linea in orderline[0]:
             linea['order_id'] = orden_id[0]
-            linea_id = self.env['pos.order.line'].create(linea)
+            linea_id = self.env['pos.order.line'].sudo().create(linea)
         return True
 
     def guardar_pedido(self,ordenes,orderlines,sesion):
@@ -51,7 +51,7 @@ class PosOrder(models.Model):
                 'table_id': orden['table_id'][0],
                 'customer_count': orden['customer_count']
             }
-            orden_id = self.env['pos.order'].create(order)
+            orden_id = self.env['pos.order'].sudo().create(order)
             for linea in orderlines[0]:
                 order_line = {
                     'order_id': orden_id.id,
@@ -60,12 +60,12 @@ class PosOrder(models.Model):
                     'discount': linea['discount'],
                     'price_unit': linea['price_unit']
                 }
-                linea_id = self.env['pos.order.line'].create(order_line)
+                linea_id = self.env['pos.order.line'].sudo().create(order_line)
         ordenes = self.env['pos.order'].search([['id','in',ordenes_a_eliminar]])
-        ordenes.unlink()
+        ordenes.sudo().unlink()
         return True
 
     def unlink_order(self,order_id):
         orden = self.env['pos.order'].search([['id','=',order_id]])
-        orden.unlink()
+        orden.sudo().unlink()
         return True

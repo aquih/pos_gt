@@ -15,7 +15,7 @@ var orden_id_cargada = 0;
 models.load_models({
     model: 'account.journal',
     fields: [],
-    domain: function(self){ return [['id','=',self.config.journal_id[0]]]; },
+    domain: function(self){ return [['id','=',self.config.invoice_journal_id[0]]]; },
     loaded: function(self,journals){
         if (journals.length > 0) {
             self.sale_journal = journals[0];
@@ -123,7 +123,7 @@ var LoadOrderButton = screens.ActionButtonWidget.extend({
     button_click: function(){
         var self = this;
         var gui = this.pos.gui;
-    
+
         gui.show_popup('textinput',{
             'title': 'Ingrese referencia de orden',
             'confirm': function(val) {
@@ -138,7 +138,7 @@ var LoadOrderButton = screens.ActionButtonWidget.extend({
                         var orders_list = [];
                         var i=0;
                         for(i = 0; i < orders.length; i++){
-                            orders_list.push({'label': orders[i]['name'],'item':orders[i]['id'],}); 
+                            orders_list.push({'label': orders[i]['name'],'item':orders[i]['id'],});
                         }
                         self.select_order(orders_list);
                     });
@@ -217,7 +217,7 @@ var LoadOrderButton = screens.ActionButtonWidget.extend({
                                 console.log('orden')
                                 console.log(orden)
                             });
-                        });                    
+                        });
                 }
             },
         });
@@ -256,7 +256,7 @@ var LoadOrderButton = screens.ActionButtonWidget.extend({
                         orden.set_order_id(orden_id_cargada);
                     }
                 });
-                
+
             });
     }
 
@@ -331,7 +331,7 @@ var SaveOrderButton = screens.ActionButtonWidget.extend({
                 orden = {
                     'partner_id': order.get_client().id,
                     'user_id': this.pos.get_cashier().id
-                }                
+                }
             }
 
             var order_id = order.attributes.order_id;
@@ -380,7 +380,7 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
         var self = this;
         var order = this.pos.get_order();
         var gui = this.pos.gui;
-    
+
         gui.show_popup('textinput',{
             'title': 'Ingrese sesión',
             'confirm': function(val) {
@@ -393,7 +393,7 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
                         var sessions_list = [];
                         var i=0;
                         for(i = 0; i < sessions.length; i++){
-                            sessions_list.push({'label': sessions[i]['name'],'item':sessions[i]['id'],}); 
+                            sessions_list.push({'label': sessions[i]['name'],'item':sessions[i]['id'],});
                         }
                         self.select_session(sessions_list);
                     });
@@ -428,7 +428,7 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
                             var cantidad_vendida = [];
                             var precio_unitario =0;
                             var cantidad =0;
-                            var posicion_orden =0; 
+                            var posicion_orden =0;
                             for (i=0; i < order.length; i++){
                                 var a = i;
                                 ordenes.push(order);
@@ -455,16 +455,16 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
                                                     result[0].floor= {'id':1,'name':'1','sequence':2}
                                                     self.pos.set_table(result[0]);
                                                     var orden = self.pos.get_order();
-                                                
+
                                                     console.log(orden)
                                                     console.log(a)
                                                     orden.set_client(db.get_partner_by_id(order[0]['partner_id'][0]));
                                                     // self.pos.add_new_order();
-                                                    
+
                                                     // console.log(a)
                                                     // orden.set_customer_count(order[0].customer_count);
                                                     // self.pos.set_cashier({'id': order[0].user_id[0]});
-                                                    
+
                                                 });*/
                                             // self.pos.set_table({'id':order[0].table_id[0],'name':order[0].table_id[1]});
                                             // orden.set_customer_count(order[a].customer_count);
@@ -482,7 +482,7 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
                                         }
                                     }
                                 });
-                                
+
                             }
                             location.reload();
                         });
@@ -523,7 +523,7 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
                                     }
                                 });
                             }
-                        });                    
+                        });
                 }
             },
         });
@@ -563,7 +563,7 @@ var LoadOrderSessionButton = screens.ActionButtonWidget.extend({
                         var producto = db.get_product_by_id(producto_id)
                         producto.qty = cantidad;
                         orden.add_product(producto,{quantity: cantidad});
-                        
+
                     }
                 });
             });
@@ -636,7 +636,7 @@ models.PosModel = models.PosModel.extend({
         .then(function (result){
 
         });
-        
+
         var order_id = this.db.add_order(order.export_as_JSON());
 
         this.flush_mutex.exec(function(){
