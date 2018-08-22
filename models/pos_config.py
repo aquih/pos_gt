@@ -15,3 +15,4 @@ class PosConfig(models.Model):
     load_order_option = fields.Boolean(string="Opción para cargar ventas")
     load_order_session_option = fields.Boolean(string="Opción para cargar sesion")
     session_save_order = fields.Many2one('pos.session', string="Sesión para guardar pedidos")
+    opcion_recetas = fields.Boolean(string="Opción Para Ver Recetas")

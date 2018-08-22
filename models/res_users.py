@@ -8,3 +8,4 @@ class Users(models.Model):
     default_pos_id = fields.Many2one("pos.config", string="Punto de Venta por Defecto")
     default_location_id = fields.Many2one(related="default_pos_id.stock_location_id", readonly=True)
     default_analytic_account_id = fields.Many2one(related="default_pos_id.analytic_account_id", readonly=True)
+    account_analytic_id = fields.Many2one('account.analytic.account', string='Cuenta analítica compras')

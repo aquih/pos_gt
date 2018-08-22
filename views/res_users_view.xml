@@ -12,6 +12,7 @@
                         <field name="default_pos_id"/>
                         <field name="default_location_id"/>
                         <field name="default_analytic_account_id"/>
+                        <field name="account_analytic_id"/>
                     </field>
                 </data>
             </field>
