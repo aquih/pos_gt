@@ -146,8 +146,10 @@ var RecetasButton = screens.ActionButtonWidget.extend({
 
     mostrar_receta: function(productos){
         var self = this;
+        var order = this.pos.get_order();
+        var producto = order.get_selected_orderline().product.display_name;
         this.gui.show_popup('selection', {
-            'title': 'Receta',
+            'title': producto + ' Receta Unitaria',
             'list': productos,
             'confirm': function(producto) {
             },
