@@ -22,7 +22,7 @@ class PosOrder(models.Model):
         for linea in orderline[0]:
             linea['order_id'] = orden_id.id
             linea_id = self.env['pos.order.line'].sudo().create(linea)
-        return False
+        return orden_id.name
 
     def actualizar_pedido(self,orden_id,orden,orderline,restaurante):
         orders = self.env['pos.order'].search([['id', '=', orden_id]])
