@@ -106,6 +106,14 @@
                             <label for="opcion_recetas" string="Opción para ver recetas"/>
                         </div>
                     </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="opcion_pedidos_vendedor"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="opcion_pedidos_vendedor" string="Solo cargar pedidos del vendedor"/>
+                        </div>
+                    </div>
                 </div>
             </sheet>
         </field>

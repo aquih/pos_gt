@@ -22,11 +22,10 @@ class PosOrder(models.Model):
         for linea in orderline[0]:
             linea['order_id'] = orden_id.id
             linea_id = self.env['pos.order.line'].create(linea)
-        return False
+        return orden_id.name
 
     def actualizar_pedido(self,orden_id,orden,orderline,restaurante):
         orders = self.env['pos.order'].search([['id', '=', orden_id]])
-        logging.warn(restaurante)
         if restaurante[0]:
             for order in orders: 
                 order.write({'partner_id': orden[0]['partner_id'], 'user_id':orden[0]['user_id'],'customer_count': orden[0]['customer_count']})
