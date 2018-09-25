@@ -23,14 +23,10 @@
         </div>
     </t>
 
+
     <t t-name="RecetasButton">
         <div class='control-button js_recetas'>
-            <t t-if="widget.pos.get_order().recetas">
-                <i class='fa fa-shopping-bag' /> Recetas
-            </t>
-            <t t-if="!widget.pos.get_order().recetas">
-                <i class='fa fa-shopping-bag' /> Recetas
-            </t>
+            <i class='fa fa-tag' /> Recetas 
         </div>
     </t>
 

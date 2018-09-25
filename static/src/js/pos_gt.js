@@ -4,8 +4,10 @@ odoo.define('pos_gt.pos_gt', function (require) {
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
+var core = require('web.core');
 var gui = require('point_of_sale.gui');
 var Model = require('web.DataModel');
+var _t = core._t;
 
 models.load_models({
     model: 'account.journal',
@@ -207,35 +209,37 @@ models.Order = models.Order.extend({
         var gui = this.pos.gui;
         var extras_db = this.pos.product_extras;
         var extra_lines_db = this.pos.product_extra_lines;
-        if (product.extras_id && product.extras_id.length > 0) {
 
-            var list = [];
-            product.extras_id.forEach(function(extra_id) {
-                var extra = extras_db[extra_id];
-                var extra_lines = extra_lines_db[extra_id];
+        if (arguments.cargar_extras || arguments.cargar_extras == null){
+            if (product.extras_id && product.extras_id.length > 0) {
+                var list = [];
+                product.extras_id.forEach(function(extra_id) {
+                    var extra = extras_db[extra_id];
+                    var extra_lines = extra_lines_db[extra_id];
 
-                if (extra_lines) {
-                    extra_lines.forEach(function(line) {
-                        line.type = extra.type;
-                        list.push({
-                            label: line.name + " ( "+line.qty+" )",
-                            item: line,
-                        });
-                    })
-                }
-            })
-
-            gui.show_popup('selection', {
-                'title': 'Por favor seleccione',
-                'list': list,
-                'confirm': function(line) {
-                    var extra_product = db.get_product_by_id(line.product_id[0]);
-                    order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
-                    if (product.extras_id.length == 1) {
-                        gui.close_popup();
+                    if (extra_lines) {
+                        extra_lines.forEach(function(line) {
+                            line.type = extra.type;
+                            list.push({
+                                label: line.name + " ( "+line.qty+" )",
+                                item: line,
+                            });
+                        })
                     }
-                },
-            });
+                })
+
+                gui.show_popup('selection', {
+                    'title': 'Por favor seleccione',
+                    'list': list,
+                    'confirm': function(line) {
+                        var extra_product = db.get_product_by_id(line.product_id[0]);
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
+                        if (product.extras_id.length == 1) {
+                            gui.close_popup();
+                        }
+                    },
+                });
+            }
         }
     }
 })
