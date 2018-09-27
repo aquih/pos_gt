@@ -13,11 +13,6 @@
                 <field name="opcion_recetas"/>
                 <field name="default_client_id"/>
                 <field name="analytic_account_id"/>
-                <field name="save_order_option"/>
-                <field name="load_order_option"/>
-                <field name="session_save_order"/>
-                <field name="opcion_pedidos_vendedor"/>
-                <field name="load_order_session_option"/>
             </field>
         </field>
     </record>
