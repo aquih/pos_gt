@@ -26,34 +26,9 @@
 
     <t t-name="RecetasButton">
         <div class='control-button js_recetas'>
-            <i class='fa fa-tag' /> Recetas 
+            <i class='fa fa-tag' /> Recetas
         </div>
     </t>
-
-    <t t-name="SaveOrderButton">
-        <div class='control-button js_load_order'>
-            <i class='fa fa-tag' /> Guardar 
-        </div>
-    </t>
-
-    <t t-name="LoadOrderButton">
-        <div class='control-button js_load_order'>
-            <i class='fa fa-tag' /> cargar 
-        </div>
-    </t>
-
-    <t t-name="SaveOrderButton">
-        <div class='control-button js_load_order'>
-            <i class='fa fa-tag' /> Guardar 
-        </div>
-    </t>
-
-    <t t-name="LoadOrderSessionButton">
-        <div class='control-button js_load_order_session'>
-            <i class='fa fa-tag' /> cargar sesion
-        </div>
-    </t>
-
 
     <t t-extend="NumpadWidget">
         <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
