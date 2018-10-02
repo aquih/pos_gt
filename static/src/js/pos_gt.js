@@ -7,6 +7,7 @@ var pos_db = require('point_of_sale.DB');
 var rpc = require('web.rpc');
 var gui = require('point_of_sale.gui');
 var core = require('web.core');
+var field_utils = require('web.field_utils');
 var QWeb = core.qweb;
 var _t = core._t;
 
@@ -138,7 +139,7 @@ var RecetasButton = screens.ActionButtonWidget.extend({
                         })
                         .then(function (productos){
                             for (var i=0; i < productos.length; i++){
-                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]   
+                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]
                                 productos[i]['item'] = productos[i].id
                             }
                             self.mostrar_receta(productos);
@@ -206,16 +207,11 @@ var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
 
     add_product: function(product, options) {
-        if (options) {
-            options.merge = false;
-        } else {
-            options = { 'merge': false };
-        }
+        options = options || {};
 
         function show_extras_popup(current_list) {
 
             if (gui.has_popup()) {
-                console.log("Esperando");
                 setTimeout(function(){
                     show_extras_popup(current_list)
                 }, 800)
@@ -236,16 +232,18 @@ models.Order = models.Order.extend({
             }
         }
 
+        options.merge = false;
         _super_order.add_product.apply(this, [product, options]);
 
         var new_line = this.get_last_orderline();
         var order = this.pos.get_order();
         var db = this.pos.db;
         var gui = this.pos.gui;
+        var chrome = this.pos.chrome;
         var extras_db = this.pos.product_extras;
         var extra_lines_db = this.pos.product_extra_lines;
 
-        if (options.cargar_extras || options.cargar_extras == null){
+        if (options.cargar_extras || options.cargar_extras == null) {
             if (product.extras_id && product.extras_id.length > 0) {
                 var extra_lists = [];
                 product.extras_id.forEach(function(extra_id) {
@@ -257,7 +255,7 @@ models.Order = models.Order.extend({
                         extra_lines.forEach(function(line) {
                             line.type = extra.type;
                             list.push({
-                                label: line.name + " ( "+line.qty+" )",
+                                label: line.name + " ( "+line.qty+" ) - " + chrome.format_currency(line.price_extra),
                                 item: line,
                             });
                         })
@@ -266,7 +264,6 @@ models.Order = models.Order.extend({
                 })
 
                 show_extras_popup(extra_lists);
-
             }
         }
     }
@@ -288,7 +285,7 @@ models.Orderline = models.Orderline.extend({
             });
 
             // Si se trata de modificar la linea extra y esta no se puede modificar
-            if (line.extra_type && line.extra_type == "fixed" && to_remove.length > 0) {
+            if (line.extra_type && line.extra_type == "fixed" && to_remove.length <= 0) {
 
                 this.pos.gui.show_popup("error",{
                     "title": "Parte de combo",
