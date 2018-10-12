@@ -62,6 +62,17 @@ models.load_models({
     },
 });
 
+screens.ProductCategoriesWidget.include({
+    set_category : function(category) {
+        var db = this.pos.db;
+        if (!category) {
+            category = db.get_category_by_id(this.start_categ_id);
+            console.log(category);
+        }
+        this._super(category);
+    }
+})
+
 var TagNumberButton = screens.ActionButtonWidget.extend({
     template: 'TagNumberButton',
     init: function(parent, options) {
