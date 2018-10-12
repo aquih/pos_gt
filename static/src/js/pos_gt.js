@@ -67,7 +67,6 @@ screens.ProductCategoriesWidget.include({
         var db = this.pos.db;
         if (!category) {
             category = db.get_category_by_id(this.start_categ_id);
-            console.log(category);
         }
         this._super(category);
     }
