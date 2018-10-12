@@ -62,6 +62,16 @@ models.load_models({
     },
 });
 
+screens.ProductCategoriesWidget.include({
+    set_category : function(category) {
+        var db = this.pos.db;
+        if (!category) {
+            category = db.get_category_by_id(this.start_categ_id);
+        }
+        this._super(category);
+    }
+})
+
 var TagNumberButton = screens.ActionButtonWidget.extend({
     template: 'TagNumberButton',
     init: function(parent, options) {
@@ -138,7 +148,7 @@ var RecetasButton = screens.ActionButtonWidget.extend({
                         })
                         .then(function (productos){
                             for (var i=0; i < productos.length; i++){
-                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]   
+                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]
                                 productos[i]['item'] = productos[i].id
                             }
                             self.mostrar_receta(productos);
@@ -314,6 +324,87 @@ models.Orderline = models.Orderline.extend({
     }
 })
 
+var DosPorUnoButton = screens.ActionButtonWidget.extend({
+    template: 'DosPorUnoButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        var cantidad_productos_linea = 0;
+        var productos = [];
+        var productos_promocion = this.pos.config.productos_ids;
+
+        order.get_orderlines().forEach(function (orderline) {
+            if (orderline.quantity > 1){
+                if (productos_promocion.length > 0){
+                    for ( var i=0; i < productos_promocion; i++){
+                        if (productos_promocion[i] == orderline.get_product().id){
+                            for (i = 0; i < orderline.quantity; i++){
+                                order.add_product( orderline.get_product(),{quantity: 1});
+                            }
+                            order.remove_orderline(orderline);
+                        }
+                    }
+                }
+            }
+        });
+
+        order.get_orderlines().forEach(function (orderline) {
+            if (orderline.quantity == 1){
+                if(productos_promocion.length > 0){
+                    for (var j=0; j < productos_promocion.length; j++){
+                        if (productos_promocion[j] == orderline.product.id){
+                            productos.push({'linea': orderline,'price': orderline.price,'quantity': orderline.quantity})
+                            cantidad_productos_linea += orderline.quantity
+
+                        }
+                    }
+                }else{
+                    productos.push({'linea': orderline,'price': orderline.price,'quantity': orderline.quantity})
+                    cantidad_productos_linea += orderline.quantity
+                }
+            }
+        });
+        if (productos.length > 0){
+            self.dos_por_uno_linea(cantidad_productos_linea,productos);
+        }
+        order.dos_por_uno = !order.dos_por_uno;
+        this.renderElement();
+    },
+    dos_por_uno_linea:function(cantidad_productos_linea,productos){
+      if (cantidad_productos_linea % 2 == 0){
+          productos.sort(function(a,b){
+              return b['price'] - a['price']
+          })
+          var i;
+          for (i = cantidad_productos_linea/2 ; i < productos.length; i++) {
+              productos[i].linea.set_unit_price(0);
+          }
+      }else{
+          productos.sort(function(a,b){
+              return a['price'] - b['price']
+          })
+          var i;
+          for (i=0; i< ((cantidad_productos_linea - 1 )/ 2) ; i++){
+              productos[i].linea.set_unit_price(0);
+          }
+      }
+
+    },
+
+});
+
+screens.define_action_button({
+    'name': 'dos_por_uno',
+    'widget': DosPorUnoButton,
+    'condition': function(){
+        return this.pos.config.opcion_dos_por_uno;
+    },
+});
+
 pos_db.include({
     _partner_search_string: function(partner){
         var str =  partner.name;
@@ -337,7 +428,7 @@ pos_db.include({
         }
         str = '' + partner.id + ':' + str.replace(':','') + '\n';
         return str;
-    }
+    },
 })
 
 });

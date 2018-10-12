@@ -12,3 +12,5 @@ class PosConfig(models.Model):
     default_client_id = fields.Many2one("res.partner", string="Cliente CF")
     analytic_account_id = fields.Many2one("account.analytic.account", string="Cuenta Analítica")
     opcion_recetas = fields.Boolean(string="Opción Para Ver Recetas")
+    opcion_dos_por_uno = fields.Boolean(string="Opción 2x1")
+    productos_ids = fields.Many2many('product.product',relation="productos_ids_rel",string='Productos')
