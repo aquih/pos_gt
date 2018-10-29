@@ -235,6 +235,7 @@ models.Order = models.Order.extend({
                     'list': list,
                     'confirm': function(line) {
                         var extra_product = db.get_product_by_id(line.product_id[0]);
+                        extra_product.lst_price = line.price_extra;
                         order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
                         show_extras_popup(current_list);
                     },
