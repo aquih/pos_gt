@@ -4,11 +4,17 @@ odoo.define('pos_gt.pos_gt', function (require) {
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
+var rpc = require('web.rpc');
+var gui = require('point_of_sale.gui');
+var core = require('web.core');
+var field_utils = require('web.field_utils');
+var QWeb = core.qweb;
+var _t = core._t;
 
 models.load_models({
     model: 'account.journal',
     fields: [],
-    domain: function(self){ return [['id','=',self.config.journal_id[0]]]; },
+    domain: function(self){ return [['id','=',self.config.invoice_journal_id[0]]]; },
     loaded: function(self,journals){
         if (journals.length > 0) {
             self.sale_journal = journals[0];
@@ -56,6 +62,16 @@ models.load_models({
         self.product_extra_lines = extra_lines_by_id;
     },
 });
+
+screens.ProductCategoriesWidget.include({
+    set_category : function(category) {
+        var db = this.pos.db;
+        if (!category) {
+            category = db.get_category_by_id(this.start_categ_id);
+        }
+        this._super(category);
+    }
+})
 
 var TagNumberButton = screens.ActionButtonWidget.extend({
     template: 'TagNumberButton',
@@ -107,6 +123,65 @@ screens.define_action_button({
     },
 });
 
+
+var RecetasButton = screens.ActionButtonWidget.extend({
+    template: 'RecetasButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        var gui = this.pos.gui;
+        var producto = order.get_selected_orderline().product.product_tmpl_id;
+        rpc.query({
+                model: 'mrp.bom',
+                method: 'search_read',
+                args: [[['product_tmpl_id', '=', producto]] , ['id','product_tmpl_id','code']],
+            })
+            .then(function (receta){
+                if(receta.length > 0){
+                    rpc.query({
+                            model: 'mrp.bom.line',
+                            method: 'search_read',
+                            args: [[['bom_id', '=', receta[0].id]] , ['id','product_id','product_uom_id','product_qty']],
+                        })
+                        .then(function (productos){
+                            for (var i=0; i < productos.length; i++){
+                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]
+                                productos[i]['item'] = productos[i].id
+                            }
+                            self.mostrar_receta(productos);
+
+                        });
+                }
+            });
+        order.recetas = !order.recetas;
+        this.renderElement();
+    },
+    mostrar_receta: function(productos){
+        var self = this;
+        var gui = this.pos.gui;
+        var order = this.pos.get_order();
+        var producto = order.get_selected_orderline().product.display_name;
+        this.gui.show_popup('selection',{
+            'title': producto + ' Receta Unitaria',
+            'list': productos,
+            'confirm': function(val) {
+            },
+        });
+    },
+});
+
+screens.define_action_button({
+    'name': 'recetas',
+    'widget': RecetasButton,
+    'condition': function(){
+        return this.pos.config.opcion_recetas;
+    },
+});
+
 screens.ClientListScreenWidget.include({
     display_client_details: function(visibility,partner,clickpos){
         this._super(visibility,partner,clickpos);
@@ -140,44 +215,67 @@ models.PosModel = models.PosModel.extend({
 
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
-    add_product: function(product, options){
-        _super_order.add_product.apply(this,arguments);
+
+    add_product: function(product, options) {
+        options = options || {};
+
+        function show_extras_popup(current_list) {
+
+            if (gui.has_popup()) {
+                setTimeout(function(){
+                    show_extras_popup(current_list)
+                }, 800)
+                return;
+            }
+
+            var list = current_list.pop();
+            if (list) {
+                gui.show_popup('selection', {
+                    'title': 'Extras',
+                    'list': list,
+                    'confirm': function(line) {
+                        var extra_product = db.get_product_by_id(line.product_id[0]);
+                        extra_product.lst_price = line.price_extra;
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
+                        show_extras_popup(current_list);
+                    },
+                });
+            }
+        }
+
+        options.merge = false;
+        _super_order.add_product.apply(this, [product, options]);
 
         var new_line = this.get_last_orderline();
         var order = this.pos.get_order();
         var db = this.pos.db;
         var gui = this.pos.gui;
+        var chrome = this.pos.chrome;
         var extras_db = this.pos.product_extras;
         var extra_lines_db = this.pos.product_extra_lines;
-        if (product.extras_id && product.extras_id.length > 0) {
 
-            var list = [];
-            product.extras_id.forEach(function(extra_id) {
-                var extra = extras_db[extra_id];
-                var extra_lines = extra_lines_db[extra_id];
+        if (options.cargar_extras || options.cargar_extras == null) {
+            if (product.extras_id && product.extras_id.length > 0) {
+                var extra_lists = [];
+                product.extras_id.forEach(function(extra_id) {
+                    var extra = extras_db[extra_id];
+                    var extra_lines = extra_lines_db[extra_id];
 
-                if (extra_lines) {
-                    extra_lines.forEach(function(line) {
-                        line.type = extra.type;
-                        list.push({
-                            label: line.name + " ( "+line.qty+" )",
-                            item: line,
-                        });
-                    })
-                }
-            })
-
-            gui.show_popup('selection', {
-                'title': 'Por favor seleccione',
-                'list': list,
-                'confirm': function(line) {
-                    var extra_product = db.get_product_by_id(line.product_id[0]);
-                    order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
-                    if (product.extras_id.length == 1) {
-                        gui.close_popup();
+                    if (extra_lines) {
+                        var list = []
+                        extra_lines.forEach(function(line) {
+                            line.type = extra.type;
+                            list.push({
+                                label: line.name + " ( "+line.qty+" ) - " + chrome.format_currency(line.price_extra),
+                                item: line,
+                            });
+                        })
+                        extra_lists.push(list);
                     }
-                },
-            });
+                })
+
+                show_extras_popup(extra_lists);
+            }
         }
     }
 })
@@ -188,10 +286,17 @@ models.Orderline = models.Orderline.extend({
         var line = this;
         var order = this.pos.get_order();
 
-        if (line && order) {
+        if (line && order && order.get_orderlines()) {
+
+            var to_remove = [];
+            order.get_orderlines().forEach(function(l) {
+                if (l.parent_line && l.parent_line.id == line.id) {
+                    to_remove.push(l);
+                }
+            });
 
             // Si se trata de modificar la linea extra y esta no se puede modificar
-            if (line.extra_type && line.extra_type == "fixed") {
+            if (line.extra_type && line.extra_type == "fixed" && to_remove.length <= 0) {
 
                 this.pos.gui.show_popup("error",{
                     "title": "Parte de combo",
@@ -199,13 +304,6 @@ models.Orderline = models.Orderline.extend({
                 });
 
             } else {
-
-                var to_remove = [];
-                order.get_orderlines().forEach(function(l) {
-                    if (l.parent_line && l.parent_line.id == line.id) {
-                        to_remove.push(l);
-                    }
-                });
 
                 // Si se trata de modificar una linea padre, se borra.
                 if (to_remove.length > 0) {
@@ -223,6 +321,87 @@ models.Orderline = models.Orderline.extend({
         }
     }
 })
+
+var DosPorUnoButton = screens.ActionButtonWidget.extend({
+    template: 'DosPorUnoButton',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        var cantidad_productos_linea = 0;
+        var productos = [];
+        var productos_promocion = this.pos.config.productos_ids;
+
+        order.get_orderlines().forEach(function (orderline) {
+            if (orderline.quantity > 1){
+                if (productos_promocion.length > 0){
+                    for ( var i=0; i < productos_promocion; i++){
+                        if (productos_promocion[i] == orderline.get_product().id){
+                            for (i = 0; i < orderline.quantity; i++){
+                                order.add_product( orderline.get_product(),{quantity: 1});
+                            }
+                            order.remove_orderline(orderline);
+                        }
+                    }
+                }
+            }
+        });
+
+        order.get_orderlines().forEach(function (orderline) {
+            if (orderline.quantity == 1){
+                if(productos_promocion.length > 0){
+                    for (var j=0; j < productos_promocion.length; j++){
+                        if (productos_promocion[j] == orderline.product.id){
+                            productos.push({'linea': orderline,'price': orderline.price,'quantity': orderline.quantity})
+                            cantidad_productos_linea += orderline.quantity
+
+                        }
+                    }
+                }else{
+                    productos.push({'linea': orderline,'price': orderline.price,'quantity': orderline.quantity})
+                    cantidad_productos_linea += orderline.quantity
+                }
+            }
+        });
+        if (productos.length > 0){
+            self.dos_por_uno_linea(cantidad_productos_linea,productos);
+        }
+        order.dos_por_uno = !order.dos_por_uno;
+        this.renderElement();
+    },
+    dos_por_uno_linea:function(cantidad_productos_linea,productos){
+      if (cantidad_productos_linea % 2 == 0){
+          productos.sort(function(a,b){
+              return b['price'] - a['price']
+          })
+          var i;
+          for (i = cantidad_productos_linea/2 ; i < productos.length; i++) {
+              productos[i].linea.set_unit_price(0);
+          }
+      }else{
+          productos.sort(function(a,b){
+              return a['price'] - b['price']
+          })
+          var i;
+          for (i=0; i< ((cantidad_productos_linea - 1 )/ 2) ; i++){
+              productos[i].linea.set_unit_price(0);
+          }
+      }
+
+    },
+
+});
+
+screens.define_action_button({
+    'name': 'dos_por_uno',
+    'widget': DosPorUnoButton,
+    'condition': function(){
+        return this.pos.config.opcion_dos_por_uno;
+    },
+});
 
 pos_db.include({
     _partner_search_string: function(partner){
@@ -247,7 +426,7 @@ pos_db.include({
         }
         str = '' + partner.id + ':' + str.replace(':','') + '\n';
         return str;
-    }
+    },
 })
 
 });

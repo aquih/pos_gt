@@ -6,12 +6,6 @@
         <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
         <field name="arch" type="xml">
             <sheet position="inside">
-                <!-- <field name="allow_discount"/>
-                <field name="allow_price_change"/>
-                <field name="ask_tag_number"/>
-                <field name="takeout_option"/>
-                <field name="default_client_id"/>
-                <field name="analytic_account_id"/> -->
                 <h2>Extras</h2>
                 <div class="row mt16 o_settings_container">
                     <div class="col-xs-12 col-md-6 o_setting_box">
@@ -63,6 +57,30 @@
                             <label for="default_client_id" string="Cuenta analítica por defecto"/>
                             <div class="content-group mt16">
                                 <field name="analytic_account_id"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="opcion_recetas"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="opcion_recetas" string="Opción para ver recetas"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="opcion_dos_por_uno"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="opcion_dos_por_uno" string="Opción 2x1"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box" attrs="{'invisible':[('opcion_dos_por_uno','=', False)]}">
+                        <div class="o_setting_right_pane">
+                            <label for="productos_ids" string="Productos 2x1"/>
+                            <div class="content-group mt16">
+                                <field name="productos_ids" widget="many2many_tags"/>
                             </div>
                         </div>
                     </div>

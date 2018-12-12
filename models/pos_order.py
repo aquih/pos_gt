@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from openerp import models, fields, api, _
+import logging
 
 class PosOrder(models.Model):
     _inherit = 'pos.order'
@@ -15,3 +16,4 @@ class PosOrder(models.Model):
         if self.config_id.analytic_account_id:
             picking.cuenta_analitica_id = self.config_id.analytic_account_id
         res = super(PosOrder, self)._force_picking_done(picking)
+

@@ -8,7 +8,7 @@ class MrpBom(models.Model):
 
     bom_extra_ids = fields.One2many('pos_gt.bom_extra_line', 'bom_id', 'BoM Extras', copy=True)
 
-class PosGTExtraLine(models.Model):
+class PosGTBomExtraLine(models.Model):
     _name = "pos_gt.bom_extra_line"
 
     def _get_default_product_uom_id(self):
