@@ -20,6 +20,7 @@
         'views/pos_order_report_view.xml',
         'views/mrp_bom_view.xml',
         'views/product_template_views.xml',
+        'views/pos_order_view.xml',
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv',
     ],

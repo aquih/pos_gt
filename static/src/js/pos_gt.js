@@ -3,6 +3,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
+var PosBaseWidget = require('point_of_sale.BaseWidget');
 var pos_db = require('point_of_sale.DB');
 var rpc = require('web.rpc');
 var gui = require('point_of_sale.gui');
@@ -30,6 +31,16 @@ models.load_models({
         if (addresses.length > 0) {
             self.sale_journal_address = addresses[0];
         }
+    },
+});
+
+models.load_models({
+    model: 'hr.employee',
+    fields: [],
+    domain: function(self){ return [['company_id','=',self.company && self.company.id]]},
+    loaded: function(self,empleados){
+        self.empleado = empleados[0]
+        self.empleados = empleados;
     },
 });
 
@@ -212,9 +223,47 @@ models.PosModel = models.PosModel.extend({
     }
 })
 
+gui.Gui = gui.Gui.extend({
+    select_empleado: function(options){
+        options = options || {};
+        var self = this;
+        var def  = new $.Deferred();
+
+        var list = [];
+        for (var i = 0; i < this.pos.empleados.length; i++) {
+            var empleado = this.pos.empleados[i];
+            list.push({
+                'label': empleado.name,
+                'item':  empleado,
+            });
+        }
+
+        this.show_popup('selection',{
+            title: options.title || _t('Seleccione empleado'),
+            list: list,
+            confirm: function(empleado){ def.resolve(empleado); },
+            cancel: function(){ def.reject(); },
+            is_selected: function(empleado){ return empleado === self.pos.get_empleado(); },
+        });
+
+        return def.then(function(empleado){
+            return empleado
+        });
+    },
+})
+
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
-
+    export_as_JSON: function() {
+        var json = _super_order.export_as_JSON.apply(this,arguments);
+        json.employee_id = this.pos.get_empleado().id;
+        return json;
+    },
+    export_for_printing: function() {
+        var json = _super_order.export_for_printing.apply(this,arguments);
+        json.employee_id = this.pos.get_empleado().name;
+        return json;
+    },
     add_product: function(product, options) {
         if (options) {
             options.merge = false;
@@ -406,6 +455,57 @@ screens.define_action_button({
     },
 });
 
+var EmpleadoWidget = PosBaseWidget.extend({
+    template: 'EmpleadoWidget',
+    init: function(parent, options){
+        options = options || {};
+        this._super(parent,options);
+    },
+    renderElement: function(){
+        var self = this;
+        this._super();
+
+        this.$el.click(function(){
+            self.click_username();
+        });
+    },
+    click_username: function(){
+        var self = this;
+        this.gui.select_empleado({
+            'security':     true,
+            'current_user': this.pos.get_empleado(),
+            'title':      _t('Cambiar Empleado'),
+        }).then(function(user){
+            self.pos.set_empleado(user);
+            self.renderElement();
+        });
+    },
+    get_name: function(){
+        var user = this.pos.get_empleado();
+        if(user){
+            return user.name;
+        }else{
+            return "";
+        }
+    },
+});
+
+screens.define_action_button({
+    'name': 'empleanombre',
+    'widget': EmpleadoWidget,
+    'replace': '.placeholder-EmpleadoWidget',
+});
+
+models.PosModel = models.PosModel.extend({
+    get_empleado: function(){
+        return this.get('empleado')|| this.db.get_empleado() || this.empleado;
+    },
+    set_empleado: function(empleado){
+        this.set('empleado', empleado);
+        this.db.set_empleado(this.empleado);
+    }
+})
+
 pos_db.include({
     _partner_search_string: function(partner){
         var str =  partner.name;
@@ -430,6 +530,16 @@ pos_db.include({
         str = '' + partner.id + ':' + str.replace(':','') + '\n';
         return str;
     },
+    set_empleado: function(empleado) {
+        this.save( 'empleado', empleado || null);
+    },
+    get_empleado: function() {
+        return this.load('empleado');
+    }
 })
+
+return {
+    EmpleadoWidget: EmpleadoWidget,
+};
 
 });
