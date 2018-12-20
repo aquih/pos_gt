@@ -223,35 +223,6 @@ models.PosModel = models.PosModel.extend({
     }
 })
 
-gui.Gui = gui.Gui.extend({
-    select_empleado: function(options){
-        options = options || {};
-        var self = this;
-        var def  = new $.Deferred();
-
-        var list = [];
-        for (var i = 0; i < this.pos.empleados.length; i++) {
-            var empleado = this.pos.empleados[i];
-            list.push({
-                'label': empleado.name,
-                'item':  empleado,
-            });
-        }
-
-        this.show_popup('selection',{
-            title: options.title || _t('Seleccione empleado'),
-            list: list,
-            confirm: function(empleado){ def.resolve(empleado); },
-            cancel: function(){ def.reject(); },
-            is_selected: function(empleado){ return empleado === self.pos.get_empleado(); },
-        });
-
-        return def.then(function(empleado){
-            return empleado
-        });
-    },
-})
-
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
     export_as_JSON: function() {
@@ -455,35 +426,36 @@ screens.define_action_button({
     },
 });
 
-var EmpleadoWidget = PosBaseWidget.extend({
+var EmpleadoWidget = screens.ActionButtonWidget.extend({
     template: 'EmpleadoWidget',
-    init: function(parent, options){
-        options = options || {};
-        this._super(parent,options);
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
     },
-    renderElement: function(){
+    button_click: function(){
         var self = this;
-        this._super();
-
-        this.$el.click(function(){
-            self.click_username();
-        });
-    },
-    click_username: function(){
-        var self = this;
-        this.gui.select_empleado({
-            'security':     true,
-            'current_user': this.pos.get_empleado(),
-            'title':      _t('Cambiar Empleado'),
-        }).then(function(user){
-            self.pos.set_empleado(user);
-            self.renderElement();
+        var order = this.pos.get_order();
+        var list = [];
+        for (var i = 0; i < this.pos.empleados.length; i++) {
+            var empleado = this.pos.empleados[i];
+            list.push({
+                'label': empleado.name,
+                'item':  empleado,
+            });
+        }
+        this.gui.show_popup('selection',{
+            'title': 'Seleccione empleado',
+            'list': list,
+            'confirm': function(empleado) {
+                self.pos.set_empleado(empleado);
+                self.renderElement();
+            },
         });
     },
     get_name: function(){
-        var user = this.pos.get_empleado();
-        if(user){
-            return user.name;
+        var empleado = this.pos.get_empleado();
+        if(empleado){
+            return empleado.name;
         }else{
             return "";
         }
@@ -493,7 +465,9 @@ var EmpleadoWidget = PosBaseWidget.extend({
 screens.define_action_button({
     'name': 'empleanombre',
     'widget': EmpleadoWidget,
-    'replace': '.placeholder-EmpleadoWidget',
+    'condition': function(){
+        return this.pos.config.opcion_empleado;
+    },
 });
 
 models.PosModel = models.PosModel.extend({

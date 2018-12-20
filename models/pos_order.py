@@ -22,5 +22,7 @@ class PosOrder(models.Model):
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
-        res['employee_id'] = ui_order['employee_id'] or False
+        sesion = self.env['pos.session'].search([('id', '=', res['session_id'])], limit=1)
+        if sesion.config_id.opcion_empleado:
+            res['employee_id'] = ui_order['employee_id'] or False
         return res
