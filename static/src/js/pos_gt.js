@@ -3,6 +3,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
+var PosBaseWidget = require('point_of_sale.BaseWidget');
 var pos_db = require('point_of_sale.DB');
 var rpc = require('web.rpc');
 var gui = require('point_of_sale.gui');
@@ -31,6 +32,16 @@ models.load_models({
         if (addresses.length > 0) {
             self.sale_journal_address = addresses[0];
         }
+    },
+});
+
+models.load_models({
+    model: 'hr.employee',
+    fields: [],
+    domain: function(self){ return [['company_id','=',self.company && self.company.id]]},
+    loaded: function(self,empleados){
+        self.empleado = empleados[0]
+        self.empleados = empleados;
     },
 });
 
@@ -215,7 +226,16 @@ models.PosModel = models.PosModel.extend({
 
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
-
+    export_as_JSON: function() {
+        var json = _super_order.export_as_JSON.apply(this,arguments);
+        json.employee_id = this.pos.get_empleado().id;
+        return json;
+    },
+    export_for_printing: function() {
+        var json = _super_order.export_for_printing.apply(this,arguments);
+        json.employee_id = this.pos.get_empleado().name;
+        return json;
+    },
     add_product: function(product, options) {
         options = options || {};
 
@@ -403,6 +423,60 @@ screens.define_action_button({
     },
 });
 
+var EmpleadoWidget = screens.ActionButtonWidget.extend({
+    template: 'EmpleadoWidget',
+    init: function(parent, options) {
+        this._super(parent, options);
+        this.pos.bind('change:selectedOrder',this.renderElement,this);
+    },
+    button_click: function(){
+        var self = this;
+        var order = this.pos.get_order();
+        var list = [];
+        for (var i = 0; i < this.pos.empleados.length; i++) {
+            var empleado = this.pos.empleados[i];
+            list.push({
+                'label': empleado.name,
+                'item':  empleado,
+            });
+        }
+        this.gui.show_popup('selection',{
+            'title': 'Seleccione empleado',
+            'list': list,
+            'confirm': function(empleado) {
+                self.pos.set_empleado(empleado);
+                self.renderElement();
+            },
+        });
+    },
+    get_name: function(){
+        var empleado = this.pos.get_empleado();
+        if(empleado){
+            return empleado.name;
+        }else{
+            return "";
+        }
+    },
+});
+
+screens.define_action_button({
+    'name': 'empleanombre',
+    'widget': EmpleadoWidget,
+    'condition': function(){
+        return this.pos.config.opcion_empleado;
+    },
+});
+
+models.PosModel = models.PosModel.extend({
+    get_empleado: function(){
+        return this.get('empleado')|| this.db.get_empleado() || this.empleado;
+    },
+    set_empleado: function(empleado){
+        this.set('empleado', empleado);
+        this.db.set_empleado(this.empleado);
+    }
+})
+
 pos_db.include({
     _partner_search_string: function(partner){
         var str =  partner.name;
@@ -427,6 +501,16 @@ pos_db.include({
         str = '' + partner.id + ':' + str.replace(':','') + '\n';
         return str;
     },
+    set_empleado: function(empleado) {
+        this.save( 'empleado', empleado || null);
+    },
+    get_empleado: function() {
+        return this.load('empleado');
+    }
 })
+
+return {
+    EmpleadoWidget: EmpleadoWidget,
+};
 
 });

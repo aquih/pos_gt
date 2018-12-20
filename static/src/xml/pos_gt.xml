@@ -98,4 +98,10 @@
         </t>
     </t>
 
+    <t t-name="EmpleadoWidget">
+        <div class='control-button js_empleado'>
+            <t t-esc="widget.get_name()"/>
+        </div>
+    </t>
+
 </templates>
