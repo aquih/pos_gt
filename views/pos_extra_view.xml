@@ -81,5 +81,5 @@
         id="menu_pos_gt_extracto"
         sequence="35"
         string="Extractos bancarios"
-        groups="point_of_sale.group_pos_manager" />
+        groups="point_of_sale.group_pos_user" />
 </odoo>
