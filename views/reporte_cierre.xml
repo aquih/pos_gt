@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <template id="reporte_cierre">
-            <t t-call="report.html_container">
+            <t t-call="web.html_container">
                 <t t-call="report.internal_layout">
                     <div class="page">
                         <h2>Cierre de caja: <span t-esc="', '.join([x.name for x in docs])"/></h2>
@@ -33,23 +33,23 @@
                                 <tr t-foreach="lineas_ingresos(docs)" t-as="linea">
                                     <td><span t-esc="linea['diario'].name"/></td>
                                     <td class="text-right">
-                                        <span t-esc="linea['balance_inicial']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="linea['balance_inicial']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-esc="linea['total_ventas']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="linea['total_ventas']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-esc="linea['balance_final']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="linea['balance_final']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-esc="linea['diferencia']" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="linea['diferencia']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td></td>
                                     <td class="text-right">
-                                        <span t-esc="total_ingresos(docs)" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="total_ingresos(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                     <td class="text-right"></td>
                                     <td class="text-right"></td>
@@ -76,7 +76,7 @@
                                     <td><span t-field="order.partner_id"/></td>
                                     <td><span t-field="order.invoice_id.number"/></td>
                                     <td class="text-right">
-                                        <span t-field="order.amount_total" t-field-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                                        <span t-field="order.amount_total" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -85,7 +85,7 @@
                                     <td></td>
                                     <td></td>
                                     <td class="text-right">
-                                        <span t-esc="total_ventas(docs)" t-esc-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="total_ventas(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
                             </tbody>

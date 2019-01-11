@@ -51,11 +51,15 @@ class ReporteCierre(models.AbstractModel):
         return total
 
     @api.model
-    def render_html(self, docids, data=None):
+    def _get_report_values(self, docids, data=None):
+        return self.get_report_values(docids, data)
+
+    @api.model
+    def get_report_values(self, docids, data=None):
         self.model = 'pos.session'
         docs = self.env[self.model].browse(docids)
 
-        docargs = {
+        return {
             'doc_ids': self.ids,
             'doc_model': self.model,
             'docs': docs,
@@ -66,5 +70,3 @@ class ReporteCierre(models.AbstractModel):
             'lineas_ingresos': self.lineas_ingresos,
             'total_ingresos': self.total_ingresos,
         }
-
-        return self.env['report'].render('pos_gt.reporte_cierre', docargs)
