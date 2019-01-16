@@ -46,6 +46,7 @@ models.load_models({
 });
 
 models.load_fields('product.product','extras_id');
+models.load_fields('res.partner','ref');
 
 models.load_models({
     model: 'pos_gt.extra',
@@ -497,6 +498,9 @@ pos_db.include({
         }
         if(partner.vat){
             str += '|' + partner.vat;
+        }
+        if(partner.ref){
+            str += '|' + partner.ref;
         }
         str = '' + partner.id + ':' + str.replace(':','') + '\n';
         return str;
