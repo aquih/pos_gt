@@ -3,7 +3,6 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
-var PosBaseWidget = require('point_of_sale.BaseWidget');
 var pos_db = require('point_of_sale.DB');
 var rpc = require('web.rpc');
 var gui = require('point_of_sale.gui');
@@ -36,7 +35,7 @@ models.load_models({
 
 models.load_models({
     model: 'hr.employee',
-    fields: [],
+    fields: ['id','name'],
     domain: function(self){ return [['company_id','=',self.company && self.company.id]]},
     loaded: function(self,empleados){
         self.empleado = empleados[0]
