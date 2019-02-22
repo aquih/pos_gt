@@ -259,6 +259,9 @@ models.Order = models.Order.extend({
                         order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
                         show_extras_popup(current_list);
                     },
+                    'cancel': function(line) {
+                        show_extras_popup(current_list);
+                    },
                 });
             }
         }
