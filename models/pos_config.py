@@ -13,5 +13,6 @@ class PosConfig(models.Model):
     analytic_account_id = fields.Many2one("account.analytic.account", string="Cuenta Analítica")
     opcion_recetas = fields.Boolean(string="Opción Para Ver Recetas")
     opcion_dos_por_uno = fields.Boolean(string="Opción 2x1")
-    productos_ids = fields.Many2many('product.product',relation="productos_ids_rel",string='Productos')
+    productos_ids = fields.Many2many('product.product',relation="productos_ids_rel",string='Productos 2x1')
     opcion_empleado = fields.Boolean(string="Opción Para Seleccionar Empleado")
+    diario_nota_credito_id = fields.Many2one("account.journal", string="Diario para Nota de Crédito")

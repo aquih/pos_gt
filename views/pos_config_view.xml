@@ -53,14 +53,6 @@
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
-                        <div class="o_setting_right_pane">
-                            <label for="default_client_id" string="Cuenta analítica por defecto"/>
-                            <div class="content-group mt16">
-                                <field name="analytic_account_id"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
                             <field name="opcion_recetas"/>
                         </div>
@@ -90,6 +82,22 @@
                         </div>
                         <div class="o_setting_right_pane">
                             <label for="opcion_empleado" string="Opción para seleccionar empleado"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="default_client_id" string="Cuenta analítica por defecto"/>
+                            <div class="content-group mt16">
+                                <field name="analytic_account_id"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="diario_nota_credito_id" string="Diario para Nota de Crédito"/>
+                            <div class="content-group mt16">
+                                <field name="diario_nota_credito_id"/>
+                            </div>
                         </div>
                     </div>
                 </div>

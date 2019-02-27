@@ -26,3 +26,27 @@ class PosOrder(models.Model):
         if sesion.config_id.opcion_empleado:
             res['employee_id'] = ui_order['employee_id'] or False
         return res
+
+    def _prepare_invoice(self):
+        res = super(PosOrder, self)._prepare_invoice()
+        if self.amount_total < 0:
+            res['journal_id'] = self.config_id.diario_nota_credito_id.id
+        return res
+
+    @api.multi
+    def nota_credito(self):
+        if self.config_id.diario_nota_credito_id:
+            accion = self.refund()
+            nueva = self.env['pos.order'].browse(accion['res_id'])
+            for p in self.statement_ids:
+                nueva.add_payment({
+                    'amount': -p.amount,
+                    'payment_date': fields.Date.context_today(self),
+                    'payment_name': _('return'),
+                    'journal': p.journal_id.id,
+                })
+            nueva.action_pos_order_invoice()
+            nueva.invoice_id.sudo().action_invoice_open()
+            nueva.account_move = nueva.invoice_id.move_id
+
+            return accion
