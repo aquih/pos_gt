@@ -10,3 +10,5 @@ account_invoice,account_invoice,account.model_account_invoice,point_of_sale.grou
 account_invoice_line,account_invoice_line,account.model_account_invoice_line,point_of_sale.group_pos_user,1,1,1,1
 account_invoice_tax,account_invoice_tax,account.model_account_invoice_tax,point_of_sale.group_pos_user,1,1,1,1
 account_analytic_line,account_analytic_line,account.model_account_analytic_line,point_of_sale.group_pos_user,1,1,1,1
+#account_partial_reconcile,account_partial_reconcile,account.model_account_partial_reconcile,point_of_sale.group_pos_user,1,1,1,1
+#account_account_type,account_account_type,account.model_account_account_type,point_of_sale.group_pos_user,1,1,1,1
