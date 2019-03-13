@@ -12,6 +12,7 @@
     'depends': ['point_of_sale','mrp'],
     'data': [
         'views/pos_config_view.xml',
+        'views/pos_order_view.xml',
         'views/pos_extra_view.xml',
         'views/res_users_view.xml',
         'views/templates.xml',
