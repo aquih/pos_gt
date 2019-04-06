@@ -46,8 +46,8 @@ class PosOrder(models.Model):
                     'journal': p.journal_id.id,
                 })
             nueva.action_pos_order_invoice()
-            nueva.invoice_id.sudo().action_invoice_open()
             nueva.invoice_id.numero_viejo = self.name
+            nueva.invoice_id.sudo().action_invoice_open()
             nueva.account_move = nueva.invoice_id.move_id
 
             return accion
