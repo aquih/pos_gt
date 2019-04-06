@@ -5,7 +5,7 @@
         <field name="model">pos.config</field>
         <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
         <field name="arch" type="xml">
-            <field name="iface_display_categ_images" position="after">
+            <field name="iface_tax_included" position="after">
                 <field name="allow_discount"/>
                 <field name="allow_price_change"/>
                 <field name="ask_tag_number"/>
