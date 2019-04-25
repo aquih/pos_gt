@@ -52,35 +52,3 @@ class PosOrder(models.Model):
             nueva.account_move = nueva.invoice_id.move_id
 
             return accion
-
-    def _reconcile_payments(self):
-        cash_basis_percentage_before_rec = {move: move.line_ids._get_matched_percentage() for move in self.mapped('account_move')}
-        for order in self:
-            aml = order.statement_ids.mapped('journal_entry_ids') | order.account_move.line_ids | order.invoice_id.move_id.line_ids
-            aml = aml.filtered(lambda r: not r.reconciled and r.account_id.internal_type == 'receivable' and r.partner_id == order.partner_id.commercial_partner_id)
-
-            try:
-                # Cash returns will be well reconciled
-                # Whereas freight returns won't be
-                # "c'est la vie..."
-                aml.with_context(skip_tax_cash_basis_entry=True).reconcile()
-            except Exception:
-                # There might be unexpected situations where the automatic reconciliation won't
-                # work. We don't want the user to be blocked because of this, since the automatic
-                # reconciliation is introduced for convenience, not for mandatory accounting
-                # reasons.
-                # It may be interesting to have the Traceback logged anyway
-                # for debugging and support purposes
-                _logger.exception('Reconciliation did not work for order %s', order.name)
-        for move in self.mapped('account_move'):
-            partial_reconcile = self.env['account.partial.reconcile'].search([
-                '|',
-                ('credit_move_id.move_id', '=', move.id),
-                ('debit_move_id.move_id', '=', move.id)], limit=1)
-            if partial_reconcile:
-	                # In case none of the order debit move lines have been reconciled
-	                # there is no need to create the tax cash basis entries as nothing has been reconciled
-	                # a known case is when the the bank journal credit account is set to a receivable account,
-	                # which has as effect to fully reconcile the payment line with its counterpart,
-	                # leaving no payment lines to reconcile with the order debit lines.
-	                partial_reconcile.create_tax_cash_basis_entry(cash_basis_percentage_before_rec[move])
