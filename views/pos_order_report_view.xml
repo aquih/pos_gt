@@ -5,8 +5,7 @@
         <field name="model">report.pos.order</field>
         <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
         <field name="arch" type="xml">
-            <field position="before"/>
-            <filter name="year" position="after">
+            <field name="config_id" position="before"/>
                 <filter string="Hoy" name="today" domain="[('date','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59))), ('date','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]" help="POS ordered created during current day"/>
             </field>
         </field>
