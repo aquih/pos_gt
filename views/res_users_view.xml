@@ -8,14 +8,16 @@
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <data>
-                    <group string="Messaging and Social" position="after">
-                        <group string="Tienda" position="after">
-                            <field name="default_pos_id"/>
-                            <field name="default_location_id"/>
-                            <field name="default_analytic_account_id"/>
-                            <field name="account_analytic_id"/>
-                        </group>
-                    </group>
+                    <notebook position="inside">
+                        <page string="Tienda">
+                            <group>
+                                <field name="default_pos_id"/>
+                                <field name="default_location_id"/>
+                                <field name="default_analytic_account_id"/>
+                                <field name="account_analytic_id"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </data>
             </field>
         </record>
