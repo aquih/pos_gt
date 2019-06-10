@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from openerp import models, fields, api, _
+from odoo.exceptions import UserError
 import logging
 
 class PosOrder(models.Model):
@@ -36,7 +37,10 @@ class PosOrder(models.Model):
 
     @api.multi
     def nota_credito(self):
-        if self.config_id.diario_nota_credito_id and not self.nota_credito_creada:
+        if self.nota_credito_creada:
+            raise UserError('La nota de crédito ya ha sido creada para este pedido.')
+
+        if self.config_id.diario_nota_credito_id:
             accion = self.refund()
             nueva = self.env['pos.order'].browse(accion['res_id'])
             for p in self.statement_ids:
