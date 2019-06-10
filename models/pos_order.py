@@ -1,10 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 from openerp import models, fields, api, _
+from odoo.exceptions import UserError
 import logging
 
 class PosOrder(models.Model):
     _inherit = 'pos.order'
+
+    nota_credito_creada = fields.Boolean('Nota credito creada', default=False)
 
     def _prepare_analytic_account(self, line):
         if line.order_id.config_id.analytic_account_id:
@@ -25,6 +28,9 @@ class PosOrder(models.Model):
 
     @api.multi
     def nota_credito(self):
+        if self.nota_credito_creada:
+            raise UserError('La nota de crédito ya ha sido creada para este pedido.')
+
         if self.config_id.diario_nota_credito_id:
             accion = self.refund()
             nueva = self.env['pos.order'].browse(accion['res_id'])
@@ -38,5 +44,7 @@ class PosOrder(models.Model):
             nueva.action_pos_order_invoice()
             nueva.invoice_id.sudo().action_invoice_open()
             nueva.account_move = nueva.invoice_id.move_id
+
+            self.nota_credito_creada = True
 
             return accion
