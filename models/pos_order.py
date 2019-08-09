@@ -42,6 +42,8 @@ class PosOrder(models.Model):
                     'journal': p.journal_id.id,
                 })
             nueva.action_pos_order_invoice()
+            if 'factura_original_id' in self.env['account.invoice']._fields:
+                nueva.invoice_id.factura_original_id= self.invoice_id.id
             nueva.invoice_id.sudo().action_invoice_open()
             nueva.account_move = nueva.invoice_id.move_id
 
