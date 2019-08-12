@@ -9,7 +9,7 @@
     'summary': 'Cambios al Punto de Venta para el manejo en Guatemala',
     'description': """ Cambios al Punto de Venta para el manejo en Guatemala """,
     'author': 'Rodrigo Fernandez',
-    'depends': ['point_of_sale','mrp'],
+    'depends': ['point_of_sale'],
     'data': [
         'views/pos_config_view.xml',
         'views/pos_order_view.xml',
@@ -19,7 +19,6 @@
         'views/reports.xml',
         'views/reporte_cierre.xml',
         'views/pos_order_report_view.xml',
-        'views/mrp_bom_view.xml',
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv',
     ],

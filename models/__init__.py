@@ -5,4 +5,4 @@ import pos_extra
 import pos_order
 import pos_session
 import res_users
-import mrp_bom
+#import mrp_bom
