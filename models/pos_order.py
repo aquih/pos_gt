@@ -2,7 +2,6 @@
 
 from openerp import models, fields, api, _
 from odoo.exceptions import UserError
-from odoo.tools import float_is_zero
 import logging
 
 class PosOrder(models.Model):
