@@ -50,6 +50,7 @@ class PosOrder(models.Model):
                     'payment_name': _('return'),
                     'journal': p.journal_id.id,
                 })
+            nueva.action_pos_order_paid()
             nueva.action_pos_order_invoice()
             nueva.invoice_id.numero_viejo = self.invoice_id.name
             if 'factura_original_id' in self.env['account.invoice']._fields:
