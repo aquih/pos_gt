@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="pos_gt_view_bank_statement_form" model="ir.ui.view">
+            <field name="name">pos_gt.account.bank.statement.form</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form" />
+            <field name="arch" type="xml">
+                <field name="accounting_date" position="after">
+                    <field name="pos_session_id"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

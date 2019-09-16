@@ -35,19 +35,43 @@ class ReporteCierre(models.AbstractModel):
         diarios = {}
         for s in docs:
             for st in s.statement_ids:
-                if st.journal_id.id not in diarios:
-                    diarios[st.journal_id.id] = {'diario': st.journal_id, 'balance_inicial': 0, 'total_ventas': 0, 'balance_final': 0, 'diferencia': 0}
-                diarios[st.journal_id.id]['balance_inicial'] += st.balance_start
-                diarios[st.journal_id.id]['total_ventas'] += st.total_entry_encoding
-                diarios[st.journal_id.id]['balance_final'] += st.balance_end_real
-                diarios[st.journal_id.id]['diferencia'] += st.difference
+                if st.journal_id.journal_user:
+                    if st.journal_id.id not in diarios:
+                        diarios[st.journal_id.id] = {'diario': st.journal_id, 'balance_inicial': 0, 'total_ventas': 0, 'balance_final': 0, 'diferencia': 0}
+                    diarios[st.journal_id.id]['balance_inicial'] += st.balance_start
+                    diarios[st.journal_id.id]['total_ventas'] += st.total_entry_encoding
+                    diarios[st.journal_id.id]['balance_final'] += st.balance_end_real
+                    diarios[st.journal_id.id]['diferencia'] += st.difference
         return diarios.values()
 
     def total_ingresos(self, docs):
         total = 0
         for s in docs:
             for st in s.statement_ids:
-                total += st.total_entry_encoding
+                if st.journal_id.journal_user:
+                    total += st.total_entry_encoding
+        return total
+
+        
+    def lineas_egresos(self, docs):
+        diarios = {}
+        for s in docs:
+            for st in s.statement_ids:
+                if not st.journal_id.journal_user:
+                    if st.journal_id.id not in diarios:
+                        diarios[st.journal_id.id] = {'diario': st.journal_id, 'balance_inicial': 0, 'total_ventas': 0, 'balance_final': 0, 'diferencia': 0}
+                    diarios[st.journal_id.id]['balance_inicial'] += st.balance_start
+                    diarios[st.journal_id.id]['total_ventas'] += st.total_entry_encoding
+                    diarios[st.journal_id.id]['balance_final'] += st.balance_end_real
+                    diarios[st.journal_id.id]['diferencia'] += st.difference
+        return diarios.values()
+
+    def total_egresos(self, docs):
+        total = 0
+        for s in docs:
+            for st in s.statement_ids:
+                if not st.journal_id.journal_user:
+                    total += st.total_entry_encoding
         return total
 
     @api.model
@@ -69,4 +93,6 @@ class ReporteCierre(models.AbstractModel):
             'total_ventas': self.total_ventas,
             'lineas_ingresos': self.lineas_ingresos,
             'total_ingresos': self.total_ingresos,
+            'lineas_egresos': self.lineas_egresos,
+            'total_egresos': self.total_egresos,
         }
