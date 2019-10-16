@@ -62,5 +62,3 @@ class PosOrder(models.Model):
             self.nota_credito_creada = True
 
             return accion
-
-
