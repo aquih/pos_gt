@@ -6,7 +6,7 @@
             <field name="model">hr.employee</field>
 	        <field name="inherit_id" ref="hr.view_employee_form"/>
 	        <field name="arch" type="xml">
-                <field name="name" positio="after">
+                <field name="work_phone" positio="after">
                     <field name="clave_empleado" groups="base.group_system"/>
                 </field>
 	        </field>
