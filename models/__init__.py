@@ -7,3 +7,4 @@ from . import res_users
 from . import mrp_bom
 from . import product
 from . import product_template
+from . import hr

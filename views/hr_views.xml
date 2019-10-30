@@ -1,0 +1,16 @@
+<openerp>
+  <data>
+
+        <record id="pos_gt_view_employee_form" model="ir.ui.view">
+            <field name="name">pos_gt.hr.employee.form</field>
+            <field name="model">hr.employee</field>
+	        <field name="inherit_id" ref="hr.view_employee_form"/>
+	        <field name="arch" type="xml">
+                <field name="work_phone" positio="after">
+                    <field name="clave_empleado" groups="base.group_system"/>
+                </field>
+	        </field>
+	    </record>
+
+  </data>
+</openerp>

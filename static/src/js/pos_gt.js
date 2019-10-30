@@ -7,6 +7,7 @@ var pos_db = require('point_of_sale.DB');
 var rpc = require('web.rpc');
 var gui = require('point_of_sale.gui');
 var core = require('web.core');
+var PopupWidget = require('point_of_sale.popups');
 var field_utils = require('web.field_utils');
 var QWeb = core.qweb;
 var _t = core._t;
@@ -36,7 +37,7 @@ models.load_models({
 
 models.load_models({
     model: 'hr.employee',
-    fields: ['id','name'],
+    fields: ['id','name','clave_empleado'],
     domain: function(self){ return [['company_id','=',self.company && self.company.id]]},
     loaded: function(self,empleados){
         self.empleado = empleados[0]
@@ -97,6 +98,25 @@ screens.ProductCategoriesWidget.include({
         this._super(category);
     }
 })
+
+var PassInputPopupWidget = PopupWidget.extend({
+    template: 'PassInputPopupWidget',
+    show: function(options){
+        options = options || {};
+        this._super(options);
+
+        this.renderElement();
+        this.$('input,textarea').focus();
+    },
+    click_confirm: function(){
+        var value = this.$('input,textarea').val();
+        this.gui.close_popup();
+        if( this.options.confirm ){
+            this.options.confirm.call(this,value);
+        }
+    },
+});
+gui.define_popup({name:'passinput', widget: PassInputPopupWidget});
 
 var TagNumberButton = screens.ActionButtonWidget.extend({
     template: 'TagNumberButton',
@@ -461,8 +481,24 @@ var EmpleadoWidget = screens.ActionButtonWidget.extend({
             'title': 'Seleccione empleado',
             'list': list,
             'confirm': function(empleado) {
-                self.pos.set_empleado(empleado);
-                self.renderElement();
+                if(empleado['clave_empleado'].length > 0){
+                    self.gui.show_popup('passinput',{
+                        'title': 'Ingrese clave',
+                        'confirm': function(clave_empleado) {
+                            if (clave_empleado == empleado['clave_empleado']){
+                                self.pos.set_empleado(empleado);
+                                self.renderElement();
+                            }else{
+                                self.renderElement();
+                            }
+                        },
+                    });
+                }else{
+                    self.pos.set_empleado(empleado);
+                    self.renderElement();
+                }
+
+
             },
         });
     },
