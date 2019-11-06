@@ -7,4 +7,4 @@ import logging
 class hr_employee(models.Model):
     _inherit = 'hr.employee'
 
-    clave_empleado = fields.Char('Clave')
+    clave_empleado = fields.Char('Clave POS')
