@@ -267,7 +267,7 @@ models.Order = models.Order.extend({
     },
     export_for_printing: function() {
         var json = _super_order.export_for_printing.apply(this,arguments);
-        json.employee_id = this.pos.get_empleado().name;
+        json.employee = this.pos.get_empleado();
         return json;
     },
     add_product: function(product, options) {
