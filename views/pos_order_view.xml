@@ -7,14 +7,14 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
         <field name="arch" type="xml">
             <button name="refund" position="after">
-                <button name="nota_credito" string="Nota de Credito" type="object" attrs="{'invisible':[('state','=','draft')]}"/>
+                <button name="nota_credito" string="Nota de Credito" type="object" attrs="{'invisible':['|', ('state','=','draft'), ('amount_total','&lt;',0)]}"/>
+            </button>
+            <button name="refund" position="attributes">
+                <attribute name="invisible">1</attribute>
             </button>
             <field name="user_id" position="after">
                 <field name="employee_id"/>
             </field>
-            <button name="refund" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </button>
         </field>
     </record>
 

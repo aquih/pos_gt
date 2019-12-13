@@ -37,7 +37,7 @@ models.load_models({
 
 models.load_models({
     model: 'hr.employee',
-    fields: ['id','name','clave_empleado'],
+    fields: ['id','name','clave_empleado','codigo_empleado'],
     domain: function(self){ return [['company_id','=',self.company && self.company.id]]},
     loaded: function(self,empleados){
         self.empleado = empleados[0]
@@ -477,30 +477,76 @@ var EmpleadoWidget = screens.ActionButtonWidget.extend({
                 'item':  empleado,
             });
         }
-        this.gui.show_popup('selection',{
-            'title': 'Seleccione empleado',
-            'list': list,
-            'confirm': function(empleado) {
-                if(empleado['clave_empleado'].length > 0){
-                    self.gui.show_popup('passinput',{
-                        'title': 'Ingrese clave',
-                        'confirm': function(clave_empleado) {
-                            if (clave_empleado == empleado['clave_empleado']){
+
+        if (this.pos.config.filtro_empleado){
+            this.gui.show_popup('textinput',{
+                'title': 'Seleccione empleado',
+                'confirm': function(filtro) {
+                    var lista_empleados = []
+                    for (var i=0; i < list.length; i++){
+
+                        if (list[i]['item']['codigo_empleado'] != false){
+                            if (list[i]['item']['codigo_empleado'].toLowerCase().includes(filtro) || list[i]['item']['name'].toLowerCase().includes(filtro)  ){
+                                lista_empleados.push(list[i]);
+                            }
+                        }else{
+                            if ( list[i]['item']['name'].toLowerCase().includes(filtro)){
+                                lista_empleados.push(list[i]);
+                            }
+                        }
+                    }
+                    this.gui.show_popup('selection',{
+                        'title': 'Seleccione empleado',
+                        'list': lista_empleados,
+                        'confirm': function(empleado) {
+                            if(empleado['clave_empleado'].length > 0){
+                                self.gui.show_popup('passinput',{
+                                    'title': 'Ingrese clave',
+                                    'confirm': function(clave_empleado) {
+                                        if (clave_empleado == empleado['clave_empleado']){
+                                            self.pos.set_empleado(empleado);
+                                            self.renderElement();
+                                        }else{
+                                            self.renderElement();
+                                        }
+                                    },
+                                });
+                            }else{
                                 self.pos.set_empleado(empleado);
                                 self.renderElement();
-                            }else{
-                                self.renderElement();
                             }
+
+
                         },
                     });
-                }else{
-                    self.pos.set_empleado(empleado);
-                    self.renderElement();
-                }
 
+                },
+            });
+        }else{
+            this.gui.show_popup('selection',{
+                'title': 'Seleccione empleado',
+                'list': list,
+                'confirm': function(empleado) {
+                    if(empleado['clave_empleado'].length > 0){
+                        self.gui.show_popup('passinput',{
+                            'title': 'Ingrese clave',
+                            'confirm': function(clave_empleado) {
+                                if (clave_empleado == empleado['clave_empleado']){
+                                    self.pos.set_empleado(empleado);
+                                    self.renderElement();
+                                }else{
+                                    self.renderElement();
+                                }
+                            },
+                        });
+                    }else{
+                        self.pos.set_empleado(empleado);
+                        self.renderElement();
+                    }
+                },
+            });
+        }
 
-            },
-        });
     },
     get_name: function(){
         var empleado = this.pos.get_empleado();
