@@ -62,3 +62,8 @@ class PosOrder(models.Model):
             self.nota_credito_creada = True
 
             return accion
+
+class PosOrderLine(models.Model):
+    _inherit = "pos.order.line"
+
+    note = fields.Char('Nota')
