@@ -15,9 +15,6 @@
             <field name="user_id" position="after">
                 <field name="employee_id"/>
             </field>
-            <field name="price_subtotal_incl" position="after">
-                <field name="note"/>
-            </field>
         </field>
     </record>
 
