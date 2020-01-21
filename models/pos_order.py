@@ -62,8 +62,8 @@ class PosOrder(models.Model):
                     'payment_name': _('return'),
                     'journal': p.journal_id.id,
                 })
-            orden_id = self.env['pos.order'].search([('id','=', int(accion['context']['params']['id']))])
-            for linea in orden_id.lines:
+
+            for linea in self.lines:
                 if linea.pack_lot_ids:
                     for pack_linea in linea.pack_lot_ids:
                         self.asignar_series(nueva,pack_linea.product_id,pack_linea.lot_name)
