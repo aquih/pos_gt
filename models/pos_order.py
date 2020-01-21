@@ -35,6 +35,18 @@ class PosOrder(models.Model):
             res['journal_id'] = self.config_id.diario_nota_credito_id.id
         return res
 
+    # asignamos en el pedido devuelto las series que vienen del pedido original
+    # para que en el envío de devolución las asigne tambien
+    def asignar_series(self, pedido_devuelto, producto_id,numero_serie):
+        pack_lot_copy_ids = True
+        for linea in pedido_devuelto.lines:
+            if linea.product_id == producto_id:
+                pack_lot_copy_ids = self.env['pos.pack.operation.lot'].create({
+                    'pos_order_line_id': linea.id,
+                    'lot_name': numero_serie
+                })
+        return pack_lot_copy_ids
+
     @api.multi
     def nota_credito(self):
         if self.nota_credito_creada:
@@ -50,6 +62,11 @@ class PosOrder(models.Model):
                     'payment_name': _('return'),
                     'journal': p.journal_id.id,
                 })
+            orden_id = self.env['pos.order'].search([('id','=', int(accion['context']['params']['id']))])
+            for linea in orden_id.lines:
+                if linea.pack_lot_ids:
+                    for pack_linea in linea.pack_lot_ids:
+                        self.asignar_series(nueva,pack_linea.product_id,pack_linea.lot_name)
             nueva.action_pos_order_paid()
             nueva.action_pos_order_invoice()
             nueva.invoice_id.numero_viejo = self.invoice_id.name
