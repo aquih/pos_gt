@@ -2,27 +2,24 @@
 <odoo>
     <data>
 
-        <record id="pos_gt_view_bank_statement_form" model="ir.ui.view">
-            <field name="name">pos_gt.account.bank.statement.form</field>
-            <field name="model">account.bank.statement</field>
-            <field name="inherit_id" ref="account.view_bank_statement_form" />
-            <field name="arch" type="xml">
-                <field name="company_id" position="after">
-                    <field name="pos_session_id"/>
-                </field>
-            </field>
-        </record>
-
         <record id="pos_gt_invoice_form" model="ir.ui.view">
-            <field name="name">pos_gt.account.invoice.form</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="name">pos_gt.account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <button name="action_invoice_open" position="attributes">
+                <button name="action_post" position="attributes">
                     <attribute name="groups">account.group_account_invoice,point_of_sale.group_pos_user</attribute>
                 </button>
             </field>
         </record>
+
+        <menuitem
+            parent="point_of_sale.menu_point_of_sale"
+            action="account.action_bank_statement_tree"
+            id="menu_pos_gt_extracto"
+            sequence="40"
+            string="Extractos bancarios"
+            groups="point_of_sale.group_pos_user" />
 
     </data>
 </odoo>

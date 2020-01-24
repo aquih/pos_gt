@@ -4,13 +4,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 var screens = require('point_of_sale.screens');
 var models = require('point_of_sale.models');
 var pos_db = require('point_of_sale.DB');
-var rpc = require('web.rpc');
 var gui = require('point_of_sale.gui');
-var core = require('web.core');
-var PopupWidget = require('point_of_sale.popups');
-var field_utils = require('web.field_utils');
-var QWeb = core.qweb;
-var _t = core._t;
 
 models.load_models({
     model: 'account.journal',
@@ -35,18 +29,8 @@ models.load_models({
     },
 });
 
-models.load_models({
-    model: 'hr.employee',
-    fields: ['id','name','clave_empleado','codigo_empleado'],
-    domain: function(self){ return [['company_id','=',self.company && self.company.id]]},
-    loaded: function(self,empleados){
-        self.empleado = empleados[0]
-        self.empleados = empleados;
-    },
-});
-
-models.load_fields('product.product','extras_id');
-models.load_fields('res.partner','ref');
+models.load_fields('product.product', 'extras_id');
+models.load_fields('res.partner', 'ref');
 
 models.load_models({
     model: 'pos_gt.extra',
@@ -76,47 +60,17 @@ models.load_models({
 });
 
 screens.ClientListScreenWidget.include({
-        show: function(){
-            var self = this;
-            var nit = '';
-            this._super();
-            this.$('.new-customer').click(function(){
-                nit = self.$('.searchbox input')[0].value
-                self.display_client_details('edit',{
-                    'vat': nit,
-                });
+    show: function(){
+        var self = this;
+        self._super();
+        self.$('.new-customer').click(function(){
+            var nit = self.$('.searchbox input').val()
+            self.display_client_details('edit', {
+                'vat': nit,
             });
-        },
-});
-
-screens.ProductCategoriesWidget.include({
-    set_category : function(category) {
-        var db = this.pos.db;
-        if (!category) {
-            category = db.get_category_by_id(this.start_categ_id);
-        }
-        this._super(category);
-    }
-})
-
-var PassInputPopupWidget = PopupWidget.extend({
-    template: 'PassInputPopupWidget',
-    show: function(options){
-        options = options || {};
-        this._super(options);
-
-        this.renderElement();
-        this.$('input,textarea').focus();
-    },
-    click_confirm: function(){
-        var value = this.$('input,textarea').val();
-        this.gui.close_popup();
-        if( this.options.confirm ){
-            this.options.confirm.call(this,value);
-        }
+        });
     },
 });
-gui.define_popup({name:'passinput', widget: PassInputPopupWidget});
 
 var TagNumberButton = screens.ActionButtonWidget.extend({
     template: 'TagNumberButton',
@@ -168,83 +122,17 @@ screens.define_action_button({
     },
 });
 
-
-var RecetasButton = screens.ActionButtonWidget.extend({
-    template: 'RecetasButton',
-    init: function(parent, options) {
-        this._super(parent, options);
-        this.pos.bind('change:selectedOrder',this.renderElement,this);
-    },
-    button_click: function(){
-        var self = this;
-        var order = this.pos.get_order();
-        var gui = this.pos.gui;
-        var producto = order.get_selected_orderline().product.product_tmpl_id;
-        rpc.query({
-                model: 'mrp.bom',
-                method: 'search_read',
-                args: [[['product_tmpl_id', '=', producto]] , ['id','product_tmpl_id','code']],
-            })
-            .then(function (receta){
-                if(receta.length > 0){
-                    rpc.query({
-                            model: 'mrp.bom.line',
-                            method: 'search_read',
-                            args: [[['bom_id', '=', receta[0].id]] , ['id','product_id','product_uom_id','product_qty']],
-                        })
-                        .then(function (productos){
-                            for (var i=0; i < productos.length; i++){
-                                productos[i]['label'] = productos[i].product_id[1] +' '+ 'Cantidad: '+productos[i].product_qty+ ' ' +productos[i].product_uom_id[1]
-                                productos[i]['item'] = productos[i].id
-                            }
-                            self.mostrar_receta(productos);
-
-                        });
-                }
-            });
-        order.recetas = !order.recetas;
-        this.renderElement();
-    },
-    mostrar_receta: function(productos){
-        var self = this;
-        var gui = this.pos.gui;
-        var order = this.pos.get_order();
-        var producto = order.get_selected_orderline().product.display_name;
-        this.gui.show_popup('selection',{
-            'title': producto + ' Receta Unitaria',
-            'list': productos,
-            'confirm': function(val) {
-            },
-        });
-    },
-});
-
-screens.define_action_button({
-    'name': 'recetas',
-    'widget': RecetasButton,
-    'condition': function(){
-        return this.pos.config.opcion_recetas;
-    },
-});
-
-screens.ClientListScreenWidget.include({
-    display_client_details: function(visibility,partner,clickpos){
-        this._super(visibility,partner,clickpos);
-        if (visibility === 'edit') {
-            var vat = this.$('.screen-content input').val();
-            if (this.$('.vat').val().trim() == '') {
-                this.$('.vat').val(vat);
-            }
-        };
-    }
-})
-
 screens.PaymentScreenWidget.include({
     show: function(){
-        if (!this.pos.get_order().is_to_invoice()) {
-            this.click_invoice();
-        }
         this._super();
+        var order = this.pos.get_order();
+        console.log(order.is_to_invoice());
+        if (order.is_to_invoice()) {
+            this.$('.js_invoice').addClass('highlight');
+        }
+    },
+    click_invoice: function(){
+        // this._super();
     }
 })
 
@@ -252,6 +140,7 @@ var _super_posmodel = models.PosModel.prototype;
 models.PosModel = models.PosModel.extend({
     add_new_order: function(){
         var new_order = _super_posmodel.add_new_order.apply(this);
+        new_order.set_to_invoice(true);
         if (this.config.default_client_id) {
             new_order.set_client(this.db.get_partner_by_id(this.config.default_client_id[0]))
         }
@@ -260,16 +149,6 @@ models.PosModel = models.PosModel.extend({
 
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
-    export_as_JSON: function() {
-        var json = _super_order.export_as_JSON.apply(this,arguments);
-        json.employee_id = this.pos.get_empleado().id;
-        return json;
-    },
-    export_for_printing: function() {
-        var json = _super_order.export_for_printing.apply(this,arguments);
-        json.employee = this.pos.get_empleado();
-        return json;
-    },
     add_product: function(product, options) {
         options = options || {};
 
@@ -460,122 +339,6 @@ screens.define_action_button({
     },
 });
 
-var EmpleadoWidget = screens.ActionButtonWidget.extend({
-    template: 'EmpleadoWidget',
-    init: function(parent, options) {
-        this._super(parent, options);
-        this.pos.bind('change:selectedOrder',this.renderElement,this);
-    },
-    button_click: function(){
-        var self = this;
-        var order = this.pos.get_order();
-        var list = [];
-        for (var i = 0; i < this.pos.empleados.length; i++) {
-            var empleado = this.pos.empleados[i];
-            list.push({
-                'label': empleado.name,
-                'item':  empleado,
-            });
-        }
-
-        if (this.pos.config.filtro_empleado){
-            this.gui.show_popup('textinput',{
-                'title': 'Seleccione empleado',
-                'confirm': function(filtro) {
-                    var lista_empleados = []
-                    for (var i=0; i < list.length; i++){
-
-                        if (list[i]['item']['codigo_empleado'] != false){
-                            if (list[i]['item']['codigo_empleado'].toLowerCase().includes(filtro) || list[i]['item']['name'].toLowerCase().includes(filtro)  ){
-                                lista_empleados.push(list[i]);
-                            }
-                        }else{
-                            if ( list[i]['item']['name'].toLowerCase().includes(filtro)){
-                                lista_empleados.push(list[i]);
-                            }
-                        }
-                    }
-                    this.gui.show_popup('selection',{
-                        'title': 'Seleccione empleado',
-                        'list': lista_empleados,
-                        'confirm': function(empleado) {
-                            if(empleado['clave_empleado'].length > 0){
-                                self.gui.show_popup('passinput',{
-                                    'title': 'Ingrese clave',
-                                    'confirm': function(clave_empleado) {
-                                        if (clave_empleado == empleado['clave_empleado']){
-                                            self.pos.set_empleado(empleado);
-                                            self.renderElement();
-                                        }else{
-                                            self.renderElement();
-                                        }
-                                    },
-                                });
-                            }else{
-                                self.pos.set_empleado(empleado);
-                                self.renderElement();
-                            }
-
-
-                        },
-                    });
-
-                },
-            });
-        }else{
-            this.gui.show_popup('selection',{
-                'title': 'Seleccione empleado',
-                'list': list,
-                'confirm': function(empleado) {
-                    if(empleado['clave_empleado'].length > 0){
-                        self.gui.show_popup('passinput',{
-                            'title': 'Ingrese clave',
-                            'confirm': function(clave_empleado) {
-                                if (clave_empleado == empleado['clave_empleado']){
-                                    self.pos.set_empleado(empleado);
-                                    self.renderElement();
-                                }else{
-                                    self.renderElement();
-                                }
-                            },
-                        });
-                    }else{
-                        self.pos.set_empleado(empleado);
-                        self.renderElement();
-                    }
-                },
-            });
-        }
-
-    },
-    get_name: function(){
-        var empleado = this.pos.get_empleado();
-        if(empleado){
-            return empleado.name;
-        }else{
-            return "";
-        }
-    },
-});
-
-screens.define_action_button({
-    'name': 'empleanombre',
-    'widget': EmpleadoWidget,
-    'condition': function(){
-        return this.pos.config.opcion_empleado;
-    },
-});
-
-models.PosModel = models.PosModel.extend({
-    get_empleado: function(){
-        return this.get('empleado')|| this.db.get_empleado() || this.empleado;
-    },
-    set_empleado: function(empleado){
-        this.set('empleado', empleado);
-        this.db.set_empleado(this.empleado);
-    }
-})
-
 pos_db.include({
     _partner_search_string: function(partner){
         var str =  partner.name;
@@ -603,16 +366,6 @@ pos_db.include({
         str = '' + partner.id + ':' + str.replace(':','') + '\n';
         return str;
     },
-    set_empleado: function(empleado) {
-        this.save( 'empleado', empleado || null);
-    },
-    get_empleado: function() {
-        return this.load('empleado');
-    }
 })
-
-return {
-    EmpleadoWidget: EmpleadoWidget,
-};
 
 });

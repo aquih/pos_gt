@@ -65,18 +65,14 @@
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4, ref('point_of_sale.group_pos_manager'))]"/>
         </record>
-        <record id="pos_gt_pos_product" model="ir.rule">
-            <field name="name">POS Product Rule</field>
-            <field name="model_id" ref="product.model_product_product"/>
-            <field name="domain_force">['|',('pos_config_ids', '=', False),('pos_config_ids', '=', user.default_pos_id.id)]</field>
-            <field name="groups" eval="[(4, ref('point_of_sale.group_pos_user'))]"/>
-        </record>
+
         <record id="pos_gt_rule_pos_bank_statement_manager" model="ir.rule">
             <field name="name">Account bank manager</field>
             <field name="model_id" ref="account.model_account_bank_statement"/>
             <field name="domain_force">[(1,'=',1)]</field>
             <field name="groups" eval="[(4, ref('point_of_sale.group_pos_manager'))]"/>
         </record>
+
         <record id="point_of_sale.rule_pos_bank_statement_user" model="ir.rule">
             <field name="domain_force">[('pos_session_id.config_id','=',user.default_pos_id.id)]</field>
             <field name="groups" eval="[(4, ref('point_of_sale.group_pos_user'))]"/>

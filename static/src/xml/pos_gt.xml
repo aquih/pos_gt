@@ -98,27 +98,4 @@
         </t>
     </t>
 
-    <t t-name="EmpleadoWidget">
-        <div class='control-button js_empleado'>
-            <t t-esc="widget.get_name()"/>
-        </div>
-    </t>
-
-    <t t-name="PassInputPopupWidget">
-        <div role="dialog" class="modal-dialog">
-            <div class="popup popup-passinput">
-                <header class="title"><t t-esc=" widget.options.title || '' " /></header>
-                <input type='password' t-att-value="widget.options.value || ''"></input>
-                <div class="footer">
-                    <div class="button confirm">
-                        Ok
-                    </div>
-                    <div class="button cancel">
-                        Cancel
-                    </div>
-                </div>
-            </div>
-        </div>
-    </t>
-
 </templates>

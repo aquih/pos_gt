@@ -52,7 +52,7 @@ class ReporteCierre(models.AbstractModel):
                     total += st.total_entry_encoding
         return total
 
-        
+
     def lineas_egresos(self, docs):
         diarios = {}
         for s in docs:
@@ -76,10 +76,6 @@ class ReporteCierre(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        return self.get_report_values(docids, data)
-
-    @api.model
-    def get_report_values(self, docids, data=None):
         self.model = 'pos.session'
         docs = self.env[self.model].browse(docids)
 

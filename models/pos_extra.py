@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from openerp import models, fields, api, _
-import odoo.addons.decimal_precision as dp
+from odoo import models, fields, api, _
 
 class PosGTExtra(models.Model):
     _name = "pos_gt.extra"
@@ -19,7 +18,7 @@ class PosGTExtraLine(models.Model):
     name = fields.Char(string="Nombre", required=True)
     extra_id = fields.Many2one("pos_gt.extra", string="Extra", required=True)
     product_id = fields.Many2one("product.product", string="Producto", required=True, domain=[('available_in_pos', '=', True)])
-    qty = fields.Float("Cantidad", digits=dp.get_precision('Product Unit of Measure'), default=1)
+    qty = fields.Float("Cantidad", digits="Product Unit of Measure", default=1)
     price_extra = fields.Monetary("Precio Extra", currency_field="company_currency_id", default=0.0)
     company_currency_id = fields.Many2one("res.currency", related="extra_id.company_id.currency_id", string="Divisa", readonly=True, store=True)
 
