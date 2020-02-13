@@ -41,6 +41,8 @@ class PosOrder(models.Model):
         pack_lot_copy_ids = True
         for linea in pedido_devuelto.lines:
             if linea.product_id == producto_id:
+                logging.warn(product_id)
+                logging.warn(numero_serie)
                 pack_lot_copy_ids = self.env['pos.pack.operation.lot'].create({
                     'pos_order_line_id': linea.id,
                     'lot_name': numero_serie
