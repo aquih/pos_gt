@@ -30,26 +30,36 @@ class PosOrder(models.Model):
         if self.nota_credito_creada:
             raise UserError('La nota de crédito ya ha sido creada para este pedido.')
 
-        if 1 or self.config_id.diario_nota_credito_id:
-            accion = self.refund()
-            nueva = self.env['pos.order'].browse(accion['res_id'])
-            for p in self.payment_ids:
-                nueva.add_payment({
-                    'name': _('return'),
-                    'pos_order_id': nueva.id,
-                    'amount': -p.amount,
-                    'payment_date': fields.Date.context_today(self),
-                    'payment_method_id': p.payment_method_id.id,
+        accion = self.refund()
+        nuevo = self.env['pos.order'].browse(accion['res_id'])
+        for p in self.payment_ids:
+            nuevo.add_payment({
+                'name': _('return'),
+                'pos_order_id': nuevo.id,
+                'amount': -p.amount,
+                'payment_date': fields.Date.context_today(self),
+                'payment_method_id': p.payment_method_id.id,
+            })
+
+        for i in range(0, len(self.lines)):
+            linea_viejo = self.lines[i]
+            linea_nuevo = nuevo.lines[i]
+        
+            for pack_linea in linea_viejo.pack_lot_ids:
+                self.env['pos.pack.operation.lot'].create({
+                    'pos_order_line_id': linea_nuevo.id,
+                    'lot_name': pack_linea.lot_name
                 })
-            nueva.action_pos_order_paid()
-            nueva.action_pos_order_invoice()
-            if 'factura_original_id' in self.env['account.move']._fields:
-                nueva.account_move.factura_original_id = self.account_move.id
-            nueva.account_move.sudo().post()
 
-            self.nota_credito_creada = True
+        nuevo.action_pos_order_paid()
+        if 'factura_original_id' in self.env['account.move']._fields:
+            nuevo.with_context(default_factura_original_id=self.account_move.id).action_pos_order_invoice()
+        else:
+            nuevo.action_pos_order_invoice()
 
-            return accion
+        self.nota_credito_creada = True
+
+        return accion
 
 class PosOrderLine(models.Model):
     _inherit = "pos.order.line"

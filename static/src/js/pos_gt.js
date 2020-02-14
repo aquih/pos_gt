@@ -12,7 +12,7 @@ models.load_models({
     domain: function(self){ return [['id','=',self.config.invoice_journal_id[0]]]; },
     loaded: function(self,journals){
         if (journals.length > 0) {
-            self.sale_journal = journals[0];
+            self.invoice_journal = journals[0];
         }
     },
 });
@@ -20,11 +20,11 @@ models.load_models({
 models.load_models({
     model: 'res.partner',
     fields: [],
-    domain: function(self){ return [['id','=',self.sale_journal.direccion[0]]]; },
-    condition: function(self){ return self.sale_journal.direccion; },
+    domain: function(self){ return [['id','=',self.invoice_journal.direccion[0]]]; },
+    condition: function(self){ return self.invoice_journal.direccion; },
     loaded: function(self,addresses){
         if (addresses.length > 0) {
-            self.sale_journal_address = addresses[0];
+            self.invoice_journal_address = addresses[0];
         }
     },
 });
@@ -126,7 +126,6 @@ screens.PaymentScreenWidget.include({
     show: function(){
         this._super();
         var order = this.pos.get_order();
-        console.log(order.is_to_invoice());
         if (order.is_to_invoice()) {
             this.$('.js_invoice').addClass('highlight');
         }
