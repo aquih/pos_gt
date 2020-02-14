@@ -41,16 +41,6 @@ class PosOrder(models.Model):
                 'payment_method_id': p.payment_method_id.id,
             })
 
-        for i in range(0, len(self.lines)):
-            linea_viejo = self.lines[i]
-            linea_nuevo = nuevo.lines[i]
-        
-            for pack_linea in linea_viejo.pack_lot_ids:
-                self.env['pos.pack.operation.lot'].create({
-                    'pos_order_line_id': linea_nuevo.id,
-                    'lot_name': pack_linea.lot_name
-                })
-
         nuevo.action_pos_order_paid()
         if 'factura_original_id' in self.env['account.move']._fields:
             nuevo.with_context(default_factura_original_id=self.account_move.id).action_pos_order_invoice()
