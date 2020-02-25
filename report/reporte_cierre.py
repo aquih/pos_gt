@@ -5,18 +5,6 @@ from odoo import api, models
 class ReporteCierre(models.AbstractModel):
     _name = 'report.pos_gt.reporte_cierre'
 
-    def subtotal_ventas(self, s):
-        total = 0
-        for o in s.order_ids:
-            total += o.amount_total
-        return total
-
-    def subtotal_ingresos(self, s):
-        total = 0
-        for st in s.statement_ids:
-            total += st.total_entry_encoding
-        return total
-
     def lineas_ventas(self, docs):
         lineas = []
         for s in docs:
@@ -32,46 +20,39 @@ class ReporteCierre(models.AbstractModel):
         return total
 
     def lineas_ingresos(self, docs):
-        diarios = {}
+        metodos = {}
         for s in docs:
-            for st in s.statement_ids:
-                if st.journal_id.journal_user:
-                    if st.journal_id.id not in diarios:
-                        diarios[st.journal_id.id] = {'diario': st.journal_id, 'balance_inicial': 0, 'total_ventas': 0, 'balance_final': 0, 'diferencia': 0}
-                    diarios[st.journal_id.id]['balance_inicial'] += st.balance_start
-                    diarios[st.journal_id.id]['total_ventas'] += st.total_entry_encoding
-                    diarios[st.journal_id.id]['balance_final'] += st.balance_end_real
-                    diarios[st.journal_id.id]['diferencia'] += st.difference
-        return diarios.values()
+            for o in s.order_ids:
+                for p in o.payment_ids:
+                    if p.payment_method_id.id not in metodos:
+                        metodos[p.payment_method_id.id] = {'metodo': p.payment_method_id, 'total': 0}
+                    metodos[p.payment_method_id.id]['total'] += p.amount
+        return metodos.values()
 
     def total_ingresos(self, docs):
         total = 0
         for s in docs:
-            for st in s.statement_ids:
-                if st.journal_id.journal_user:
-                    total += st.total_entry_encoding
+            total += s.total_payments_amount
         return total
-
 
     def lineas_egresos(self, docs):
         diarios = {}
         for s in docs:
-            for st in s.statement_ids:
-                if not st.journal_id.journal_user:
-                    if st.journal_id.id not in diarios:
-                        diarios[st.journal_id.id] = {'diario': st.journal_id, 'balance_inicial': 0, 'total_ventas': 0, 'balance_final': 0, 'diferencia': 0}
-                    diarios[st.journal_id.id]['balance_inicial'] += st.balance_start
-                    diarios[st.journal_id.id]['total_ventas'] += st.total_entry_encoding
-                    diarios[st.journal_id.id]['balance_final'] += st.balance_end_real
-                    diarios[st.journal_id.id]['diferencia'] += st.difference
+            if s.cash_register_id:
+                for l in s.cash_register_id.line_ids:
+                    if l.amount < 0:
+                        if s.cash_register_id.journal_id.id not in diarios:
+                            diarios[s.cash_register_id.journal_id.id] = {'diario': s.cash_register_id.journal_id, 'total': 0}
+                        diarios[s.cash_register_id.journal_id.id]['total'] += l.amount
         return diarios.values()
 
     def total_egresos(self, docs):
         total = 0
         for s in docs:
-            for st in s.statement_ids:
-                if not st.journal_id.journal_user:
-                    total += st.total_entry_encoding
+            if s.cash_register_id:
+                for l in s.cash_register_id.line_ids:
+                    if l.amount < 0:
+                        total += l.amount
         return total
 
     @api.model
@@ -83,8 +64,6 @@ class ReporteCierre(models.AbstractModel):
             'doc_ids': self.ids,
             'doc_model': self.model,
             'docs': docs,
-            'subtotal_ventas': self.subtotal_ventas,
-            'subtotal_ingresos': self.subtotal_ingresos,
             'lineas_ventas': self.lineas_ventas,
             'total_ventas': self.total_ventas,
             'lineas_ingresos': self.lineas_ingresos,

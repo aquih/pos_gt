@@ -47,6 +47,7 @@ class PosOrder(models.Model):
         else:
             nuevo.action_pos_order_invoice()
 
+        nuevo.nota_credito_creada = True
         self.nota_credito_creada = True
 
         return accion

@@ -7,75 +7,87 @@
                     <div class="page">
                         <h2>Cierre de caja: <span t-esc="', '.join([x.name for x in docs])"/></h2>
 
+                        <h4>Efectivo</h4>
+
+                        <table class="table table-condensed mb4">
+                            <tbody>
+                                <tr>
+                                    <td class="text-right">
+                                        Inicial
+                                    </td>
+                                    <td class="text-right">
+                                        Transacciones
+                                    </td>
+                                    <td class="text-right">
+                                        Esperado
+                                    </td>
+                                    <td class="text-right">
+                                        Actual
+                                    </td>
+                                    <td class="text-right">
+                                        Diferencia
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <span t-esc="sum([x.cash_register_balance_start for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="sum([x.cash_register_total_entry_encoding for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="sum([x.cash_register_balance_end for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="sum([x.cash_register_balance_end_real for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="sum([x.cash_register_difference for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
                         <h4>Total de ingresos</h4>
 
-                        <table class="table table-condensed mb32">
+                        <table class="table table-condensed mb4">
                             <thead>
                                 <tr>
                                     <th>
-                                        <strong>Diario</strong>
+                                        Métod de pago
                                     </th>
                                     <th class="text-right">
-                                        <strong>Balance inicial</strong>
-                                    </th>
-                                    <th class="text-right">
-                                        <strong>Total de transacciones</strong>
-                                    </th>
-                                    <th class="text-right">
-                                        <strong>Balance final</strong>
-                                    </th>
-                                    <th class="text-right">
-                                        <strong>Diferencia</strong>
+                                        Total
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr t-foreach="lineas_ingresos(docs)" t-as="linea">
-                                    <td><span t-esc="linea['diario'].name"/></td>
+                                    <td><span t-esc="linea['metodo'].name"/></td>
                                     <td class="text-right">
-                                        <span t-esc="linea['balance_inicial']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="linea['total_ventas']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="linea['balance_final']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="linea['diferencia']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="linea['total']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td></td>
                                     <td class="text-right">
                                         <span t-esc="total_ingresos(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
-                                    <td class="text-right"></td>
-                                    <td class="text-right"></td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <h4>Total de egresos</h4>
 
-                        <table class="table table-condensed mb32">
+                        <table class="table table-condensed mb4">
                             <thead>
                                 <tr>
                                     <th>
-                                        <strong>Diario</strong>
+                                        Diario
                                     </th>
                                     <th class="text-right">
-                                        <strong>Balance inicial</strong>
-                                    </th>
-                                    <th class="text-right">
-                                        <strong>Total de transacciones</strong>
-                                    </th>
-                                    <th class="text-right">
-                                        <strong>Balance final</strong>
-                                    </th>
-                                    <th class="text-right">
-                                        <strong>Diferencia</strong>
+                                        Total
                                     </th>
                                 </tr>
                             </thead>
@@ -83,26 +95,14 @@
                                 <tr t-foreach="lineas_egresos(docs)" t-as="linea">
                                     <td><span t-esc="linea['diario'].name"/></td>
                                     <td class="text-right">
-                                        <span t-esc="linea['balance_inicial']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="linea['total_ventas']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="linea['balance_final']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="linea['diferencia']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                        <span t-esc="linea['total']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td></td>
                                     <td class="text-right">
                                         <span t-esc="total_egresos(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
-                                    <td class="text-right"></td>
-                                    <td class="text-right"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -124,7 +124,7 @@
                                     <td><span t-field="order.name"/></td>
                                     <td><span t-field="order.date_order"/></td>
                                     <td><span t-field="order.partner_id"/></td>
-                                    <td><span t-field="order.invoice_id.number"/></td>
+                                    <td><span t-field="order.account_move.name"/></td>
                                     <td class="text-right">
                                         <span t-field="order.amount_total" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
                                     </td>
