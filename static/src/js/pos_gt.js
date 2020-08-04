@@ -479,6 +479,7 @@ var DosPorUnoButton = screens.ActionButtonWidget.extend({
           var i;
           for (i = cantidad_productos_linea/2 ; i < productos.length; i++) {
               productos[i].linea.set_unit_price(0);
+              productos[i].linea.price_manually_set = true
           }
       }else{
           productos.sort(function(a,b){
