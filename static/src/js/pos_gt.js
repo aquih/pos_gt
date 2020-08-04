@@ -262,8 +262,6 @@ var _super_order_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
     initialize: function() {
         _super_order_line.initialize.apply(this,arguments);
-        console.log('arguments')
-        console.log(arguments);
         this.extra = false;
         if (arguments.length > 0 && ('json' in arguments[1]) && ('extra' in arguments[1]['json'])){
             this.extra = arguments[1].json.extra
