@@ -37,7 +37,7 @@ class PosOrder(models.Model):
 
     # asignamos en el pedido devuelto las series que vienen del pedido original
     # para que en el envío de devolución las asigne tambien
-    def asignar_series(self, pedido_devuelto, producto_id,numero_serie):
+    def asignar_series(self, pedido_devuelto, producto_id, numero_serie):
         pack_lot_copy_ids = True
         for linea in pedido_devuelto.lines:
             if linea.product_id == producto_id:
@@ -56,27 +56,37 @@ class PosOrder(models.Model):
 
         if self.config_id.diario_nota_credito_id:
             accion = self.refund()
-            nueva = self.env['pos.order'].browse(accion['res_id'])
+            nuevo = self.env['pos.order'].browse(accion['res_id'])
             for p in self.statement_ids:
-                nueva.add_payment({
+                nuevo.add_payment({
                     'amount': -p.amount,
                     'payment_date': fields.Date.context_today(self),
                     'payment_name': _('return'),
                     'journal': p.journal_id.id,
                 })
 
-            for linea in self.lines:
-                if linea.pack_lot_ids:
-                    for pack_linea in linea.pack_lot_ids:
-                        self.asignar_series(nueva,pack_linea.product_id,pack_linea.lot_name)
-            nueva.action_pos_order_paid()
-            nueva.action_pos_order_invoice()
-            nueva.invoice_id.numero_viejo = self.invoice_id.name
+            # for linea in self.lines:
+            #     if linea.pack_lot_ids:
+            #         for pack_linea in linea.pack_lot_ids:
+            #             self.asignar_series(nuevo,pack_linea.product_id,pack_linea.lot_name)
+
+            for i in range(0, len(self.lines)):
+                linea_viejo = self.lines[i]
+                linea_nuevo = nuevo.lines[i]
+
+                for pack_linea in linea_viejo.pack_lot_ids:
+                    self.env['pos.pack.operation.lot'].create({
+                        'pos_order_line_id': linea_nuevo.id,
+                        'lot_name': pack_linea.lot_name
+                    })
+
+            nuevo.action_pos_order_paid()
+            nuevo.action_pos_order_invoice()
+            nuevo.invoice_id.numero_viejo = self.invoice_id.name
             if 'factura_original_id' in self.env['account.invoice']._fields:
-                nueva.invoice_id.factura_original_id= self.invoice_id.id
-#            logging.warn(nueva.invoice_id.numero_viejo)
-            nueva.invoice_id.sudo().action_invoice_open()
-            nueva.account_move = nueva.invoice_id.move_id
+                nuevo.invoice_id.factura_original_id= self.invoice_id.id
+            nuevo.invoice_id.sudo().action_invoice_open()
+            nuevo.account_move = nuevo.invoice_id.move_id
 
             self.nota_credito_creada = True
 

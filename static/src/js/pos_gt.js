@@ -76,17 +76,17 @@ models.load_models({
 });
 
 screens.ClientListScreenWidget.include({
-        show: function(){
-            var self = this;
-            var nit = '';
-            this._super();
-            this.$('.new-customer').click(function(){
-                nit = self.$('.searchbox input')[0].value
-                self.display_client_details('edit',{
-                    'vat': nit,
-                });
+    show: function(){
+        var self = this;
+        var nit = '';
+        this._super();
+        this.$('.new-customer').click(function(){
+            nit = self.$('.searchbox input')[0].value
+            self.display_client_details('edit',{
+                'vat': nit,
             });
-        },
+        });
+    },
 });
 
 screens.ProductCategoriesWidget.include({
