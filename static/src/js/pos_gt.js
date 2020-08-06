@@ -262,7 +262,9 @@ var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
     export_as_JSON: function() {
         var json = _super_order.export_as_JSON.apply(this,arguments);
-        json.employee_id = this.pos.get_empleado().id;
+        if (this.pos.get_empleado()) {
+            json.employee_id = this.pos.get_empleado().id;
+        }
         return json;
     },
     export_for_printing: function() {
