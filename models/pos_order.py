@@ -57,7 +57,6 @@ class PosOrder(models.Model):
         if self.config_id.diario_nota_credito_id:
             accion = self.refund()
             nuevo = self.env['pos.order'].browse(accion['res_id'])
-            nuevo.comment = 'NC '+self.number
             for p in self.statement_ids:
                 nuevo.add_payment({
                     'amount': -p.amount,
@@ -84,6 +83,7 @@ class PosOrder(models.Model):
             nuevo.action_pos_order_paid()
             nuevo.action_pos_order_invoice()
             nuevo.invoice_id.numero_viejo = self.invoice_id.name
+            nuevo.invoice_id.comment = 'NC '+self.invoice_id.number
             if 'factura_original_id' in self.env['account.invoice']._fields:
                 nuevo.invoice_id.factura_original_id= self.invoice_id.id
             nuevo.invoice_id.sudo().action_invoice_open()
