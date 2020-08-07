@@ -57,6 +57,7 @@ class PosOrder(models.Model):
         if self.config_id.diario_nota_credito_id:
             accion = self.refund()
             nuevo = self.env['pos.order'].browse(accion['res_id'])
+            nuevo.comment = 'NC '+self.number
             for p in self.statement_ids:
                 nuevo.add_payment({
                     'amount': -p.amount,
