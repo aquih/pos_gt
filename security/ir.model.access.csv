@@ -1,8 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 extra,extra,model_pos_gt_extra,point_of_sale.group_pos_user,1,1,1,1
 extra_line,extra_line,model_pos_gt_extra_line,point_of_sale.group_pos_user,1,1,1,1
-bom_extra_line_user,bom_extra_line_user,model_pos_gt_bom_extra_line,mrp.group_mrp_user,1,0,0,0
-bom_extra_line_admin,bom_extra_line_admin,model_pos_gt_bom_extra_line,mrp.group_mrp_manager,1,1,1,1
 account_tax,account_tax,account.model_account_tax,point_of_sale.group_pos_user,1,1,1,1
 account_move,account_move,account.model_account_move,point_of_sale.group_pos_user,1,1,1,1
 account_move_line,account_move_line,account.model_account_move_line,point_of_sale.group_pos_user,1,1,1,1
