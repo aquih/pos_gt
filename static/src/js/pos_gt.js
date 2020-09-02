@@ -8,7 +8,7 @@ var gui = require('point_of_sale.gui');
 
 models.load_models({
     model: 'account.journal',
-    fields: ['direccion'],
+    fields: ['name', 'direccion'],
     domain: function(self){ return [['id','=',self.config.invoice_journal_id[0]]]; },
     loaded: function(self,journals){
         if (journals.length > 0) {
