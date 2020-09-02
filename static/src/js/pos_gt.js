@@ -19,7 +19,7 @@ models.load_models({
 
 models.load_models({
     model: 'res.partner',
-    fields: ['street'],
+    fields: ['name', 'street'],
     domain: function(self){ return [['id','=',self.invoice_journal.direccion[0]]]; },
     condition: function(self){ return self.invoice_journal.direccion; },
     loaded: function(self,addresses){
