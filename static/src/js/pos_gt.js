@@ -12,7 +12,7 @@ var _t = core._t;
 var orden_id_cargada = 0;
 models.load_models({
     model: 'account.journal',
-    fields: [],
+    fields: ['direccion'],
     domain: function(self){ return [['id','=',self.config.journal_id[0]]]; },
     loaded: function(self,journals){
         if (journals.length > 0) {
@@ -23,7 +23,7 @@ models.load_models({
 
 models.load_models({
     model: 'res.partner',
-    fields: [],
+    fields: ['street'],
     domain: function(self){ return [['id','=',self.sale_journal.direccion[0]]]; },
     condition: function(self){ return self.sale_journal.direccion; },
     loaded: function(self,addresses){
