@@ -8,7 +8,7 @@ var gui = require('point_of_sale.gui');
 
 models.load_models({
     model: 'account.journal',
-    fields: [],
+    fields: ['direccion'],
     domain: function(self){ return [['id','=',self.config.invoice_journal_id[0]]]; },
     loaded: function(self,journals){
         if (journals.length > 0) {
@@ -19,7 +19,7 @@ models.load_models({
 
 models.load_models({
     model: 'res.partner',
-    fields: [],
+    fields: ['street'],
     domain: function(self){ return [['id','=',self.invoice_journal.direccion[0]]]; },
     condition: function(self){ return self.invoice_journal.direccion; },
     loaded: function(self,addresses){
