@@ -126,20 +126,15 @@ screens.PaymentScreenWidget.include({
     show: function(){
         this._super();
         var order = this.pos.get_order();
-        if (order.is_to_invoice()) {
-            this.$('.js_invoice').addClass('highlight');
-        }
+        order.set_to_invoice(false);
+        this.click_invoice();
     },
-    click_invoice: function(){
-        // this._super();
-    }
 })
 
 var _super_posmodel = models.PosModel.prototype;
 models.PosModel = models.PosModel.extend({
     add_new_order: function(){
         var new_order = _super_posmodel.add_new_order.apply(this);
-        new_order.set_to_invoice(true);
         if (this.config.default_client_id) {
             new_order.set_client(this.db.get_partner_by_id(this.config.default_client_id[0]))
         }
@@ -168,7 +163,7 @@ models.Order = models.Order.extend({
                     'confirm': function(line) {
                         var extra_product = db.get_product_by_id(line.product_id[0]);
                         extra_product.lst_price = line.price_extra;
-                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line, adding: true } });
                         show_extras_popup(current_list);
                     },
                     'cancel': function(line) {
@@ -221,6 +216,13 @@ models.Orderline = models.Orderline.extend({
         var line = this;
         var order = this.pos.get_order();
 
+        // Si se está agregando la linea y se llama a set_auqntity, no es necesario validar nada
+        if (line.adding) {
+            line.adding = false;
+            _super_line.set_quantity.apply(this,arguments);
+            return;
+        }
+
         if (line && order && order.get_orderlines()) {
 
             var to_remove = [];
@@ -235,7 +237,7 @@ models.Orderline = models.Orderline.extend({
 
                 this.pos.gui.show_popup("error",{
                     "title": "Parte de combo",
-                    "body":  "Esta linea no se puede modificar por que es parte de un combo, solo se puede borrar todo el combo borrando la linea principal.",
+                    "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
                 });
 
             } else {
