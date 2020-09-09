@@ -25,7 +25,7 @@ models.load_models({
 
 models.load_models({
     model: 'res.partner',
-    fields: [],
+    fields: ['name', 'street'],
     domain: function(self){ return [['id','=',self.sale_journal.direccion[0]]]; },
     condition: function(self){ return self.sale_journal.direccion; },
     loaded: function(self,addresses){
