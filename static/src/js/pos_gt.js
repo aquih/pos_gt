@@ -258,7 +258,6 @@ models.PosModel = models.PosModel.extend({
     }
 })
 
-
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
     export_as_JSON: function() {
