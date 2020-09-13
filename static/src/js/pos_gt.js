@@ -163,7 +163,7 @@ models.Order = models.Order.extend({
                     'confirm': function(line) {
                         var extra_product = db.get_product_by_id(line.product_id[0]);
                         extra_product.lst_price = line.price_extra;
-                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line, adding: true } });
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { price_manually_set: true, extra_type: line.type, parent_line: new_line, adding: true } });
                         show_extras_popup(current_list);
                     },
                     'cancel': function(line) {
@@ -207,11 +207,30 @@ models.Order = models.Order.extend({
                 show_extras_popup(extra_lists);
             }
         }
+    },
+    set_pricelist: function (pricelist) {
+        var self = this;
+        this.pricelist = pricelist;
+        var lines_to_recompute = _.filter(this.get_orderlines(), function (line) {
+            return ! line.price_manually_set;
+        });
+        _.each(lines_to_recompute, function (line) {
+            if (!line.price_manually_set){
+                line.set_unit_price(line.product.get_price(self.pricelist, line.get_quantity()));
+                self.fix_tax_included_price(line);
+            }
+        });
+        this.trigger('change');
     }
 })
 
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
+
+    init_from_JSON: function(json) {
+        _super_line.init_from_JSON.apply(this,arguments);
+        this.price_manually_set = json.price_manually_set
+    },
     set_quantity: function(quantity){
         var line = this;
         var order = this.pos.get_order();
@@ -256,6 +275,11 @@ models.Orderline = models.Orderline.extend({
         } else {
             _super_line.set_quantity.apply(this,arguments);
         }
+    },
+    export_as_JSON: function() {
+        var json = _super_line.export_as_JSON.apply(this,arguments);
+        json.price_manually_set = this.price_manually_set;
+        return json
     }
 })
 
@@ -317,6 +341,7 @@ var DosPorUnoButton = screens.ActionButtonWidget.extend({
           var i;
           for (i = cantidad_productos_linea/2 ; i < productos.length; i++) {
               productos[i].linea.set_unit_price(0);
+              productos[i].linea.price_manually_set = true;
           }
       }else{
           productos.sort(function(a,b){
