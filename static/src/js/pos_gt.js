@@ -337,20 +337,7 @@ models.Order = models.Order.extend({
                 show_extras_popup(extra_lists);
             }
         }
-    },
-    set_pricelist: function (pricelist) {
-        var self = this;
-        this.pricelist = pricelist;
-        var lines_to_recompute = _.filter(this.get_orderlines(), function (line) {
-            return ! line.price_manually_set;
-        });
-        _.each(lines_to_recompute, function (line) {
-            if (!line.extra){
-                line.set_unit_price(line.product.get_price(self.pricelist, line.get_quantity()));
-                self.fix_tax_included_price(line);
-            }
-        });
-    },
+    }
 })
 
 var _super_line = models.Orderline.prototype;
