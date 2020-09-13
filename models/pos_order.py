@@ -83,6 +83,7 @@ class PosOrder(models.Model):
             nuevo.action_pos_order_paid()
             nuevo.action_pos_order_invoice()
             nuevo.invoice_id.numero_viejo = self.invoice_id.name
+            nuevo.invoice_id.comment = 'Ajuste '+self.invoice_id.name
             if 'factura_original_id' in self.env['account.invoice']._fields:
                 nuevo.invoice_id.factura_original_id= self.invoice_id.id
             nuevo.invoice_id.sudo().action_invoice_open()
