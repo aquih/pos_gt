@@ -258,28 +258,6 @@ models.PosModel = models.PosModel.extend({
     }
 })
 
-var _super_order_line = models.Orderline.prototype;
-models.Orderline = models.Orderline.extend({
-    initialize: function() {
-        _super_order_line.initialize.apply(this,arguments);
-        this.extra = false;
-        if (arguments.length > 0 && ('json' in arguments[1]) && ('extra' in arguments[1]['json'])){
-            this.extra = arguments[1].json.extra
-
-        }
-    },
-
-    set_extra: function(extra){
-        this.extra = extra;
-        this.trigger('change',this);
-    },
-
-    get_extra: function(extra){
-        return this.extra;
-    },
-
-})
-
 
 var _super_order = models.Order.prototype;
 models.Order = models.Order.extend({
@@ -295,6 +273,8 @@ models.Order = models.Order.extend({
     },
     add_product: function(product, options) {
         options = options || {};
+
+        this.price_manually_set = options.price_manually_set;
 
         function show_extras_popup(current_list) {
 
@@ -313,8 +293,7 @@ models.Order = models.Order.extend({
                     'confirm': function(line) {
                         var extra_product = db.get_product_by_id(line.product_id[0]);
                         extra_product.lst_price = line.price_extra;
-                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
-                        order.get_last_orderline().set_extra(true);
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, price_manually_set: true, extras: { extra_type: line.type, parent_line: new_line} });
                         show_extras_popup(current_list);
                     },
                     'cancel': function(line) {
@@ -376,6 +355,12 @@ models.Order = models.Order.extend({
 
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
+
+    init_from_JSON: function(json) {
+        _super_line.init_from_JSON.apply(this,arguments);
+        this.price_manually_set = json.price_manually_set
+    },
+
     set_quantity: function(quantity){
         var line = this;
         var order = this.pos.get_order();
@@ -416,7 +401,7 @@ models.Orderline = models.Orderline.extend({
     },
     export_as_JSON: function() {
         var json = _super_line.export_as_JSON.apply(this,arguments);
-        json.extra = this.get_extra();
+        json.price_manually_set = this.price_manually_set;
         return json
     },
 })
