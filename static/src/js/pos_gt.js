@@ -292,7 +292,7 @@ models.Order = models.Order.extend({
                     'confirm': function(line) {
                         var extra_product = db.get_product_by_id(line.product_id[0]);
                         extra_product.lst_price = line.price_extra;
-                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { extra_type: line.type, parent_line: new_line} });
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { price_manually_set: true, extra_type: line.type, parent_line: new_line} });
                         show_extras_popup(current_list);
                     },
                     'cancel': function(line) {
@@ -341,6 +341,12 @@ models.Order = models.Order.extend({
 
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
+
+    init_from_JSON: function(json) {
+        _super_line.init_from_JSON.apply(this,arguments);
+        this.price_manually_set = json.price_manually_set
+    },
+
     set_quantity: function(quantity){
         var line = this;
         var order = this.pos.get_order();
@@ -378,7 +384,12 @@ models.Orderline = models.Orderline.extend({
         } else {
             _super_line.set_quantity.apply(this,arguments);
         }
-    }
+    },
+    export_as_JSON: function() {
+        var json = _super_line.export_as_JSON.apply(this,arguments);
+        json.price_manually_set = this.price_manually_set;
+        return json
+    },
 })
 
 var DosPorUnoButton = screens.ActionButtonWidget.extend({
