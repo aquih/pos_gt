@@ -11,15 +11,13 @@ class MrpBom(models.Model):
 class PosGTBomExtraLine(models.Model):
     _name = "pos_gt.bom_extra_line"
 
-    def _get_default_product_uom_id(self):
-        return self.env['product.uom'].search([], limit=1, order='id').id
-
     name = fields.Char(string="Nombre", required=True)
     product_id = fields.Many2one("product.product", string="Producto", required=True, domain=[('available_in_pos', '=', True)])
     product_qty = fields.Float("Cantidad", digits=dp.get_precision('Product Unit of Measure'), default=1)
-    product_uom_id = fields.Many2one("product.uom", "Product Unit of Measure", default=_get_default_product_uom_id, required=True)
+    product_uom_id = fields.Many2one("uom.uom", "Product Unit of Measure", required=True)
     bom_id = fields.Many2one("mrp.bom", "Parent BoM", index=True, ondelete="cascade", required=True)
 
     @api.onchange('product_id')
     def product_id_change(self):
         self.name = self.product_id.name
+        self.product_uom_id = self.product_id.uom_id
