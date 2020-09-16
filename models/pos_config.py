@@ -13,3 +13,4 @@ class PosConfig(models.Model):
     opcion_dos_por_uno = fields.Boolean(string="Opción 2x1")
     productos_ids = fields.Many2many('product.product',relation="productos_ids_rel",string='Productos 2x1')
     diario_nota_credito_id = fields.Many2one("account.journal", string="Diario para Nota de Crédito")
+    permitir_devolver = fields.Boolean('Permitir devolver')
