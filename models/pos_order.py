@@ -8,6 +8,7 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     nota_credito_creada = fields.Boolean('Nota credito creada', default=False)
+    permitir_devolver = fields.Boolean('Permitir devolver', related="session_id.config_id.permitir_devolver")
 
     def _prepare_invoice_line(self, order_line):
         res = super(PosOrder, self)._prepare_invoice_line(order_line)
