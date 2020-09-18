@@ -2,6 +2,7 @@
 
 from odoo import api, fields, models, _
 from odoo.addons import decimal_precision as dp
+from odoo.release import version_info
 
 class MrpBom(models.Model):
     _inherit = 'mrp.bom'
@@ -14,7 +15,7 @@ class PosGTBomExtraLine(models.Model):
     name = fields.Char(string="Nombre", required=True)
     product_id = fields.Many2one("product.product", string="Producto", required=True, domain=[('available_in_pos', '=', True)])
     product_qty = fields.Float("Cantidad", digits=dp.get_precision('Product Unit of Measure'), default=1)
-    product_uom_id = fields.Many2one("uom.uom", "Product Unit of Measure", required=True)
+    product_uom_id = fields.Many2one("uom.uom" if version_info[0] == 12 else "product.uom", "Product Unit of Measure", required=True)
     bom_id = fields.Many2one("mrp.bom", "Parent BoM", index=True, ondelete="cascade", required=True)
 
     @api.onchange('product_id')
