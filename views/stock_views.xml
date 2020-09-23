@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_inventory_form_pos_gt" model="ir.ui.view">
+            <field name="name">stock.inventory.form.pos_gt</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//button[@name='action_validate'][1]" position="replace">
+                        <button name="action_validate" string="Validate Inventory" type="object" attrs="{'invisible': ['|', ('state', '!=', 'confirm'), ('line_ids', '!=', [])]}" groups="stock.group_stock_manager,point_of_sale.group_pos_user"/>
+                    </xpath>
+                    <xpath expr="//button[@name='action_validate'][2]" position="replace">
+                        <button name="action_validate" string="Validate Inventory" type="object" attrs="{'invisible': ['|', ('state', '!=', 'confirm'), ('line_ids', '=', [])]}" class="oe_highlight" groups="stock.group_stock_manager,point_of_sale.group_pos_user"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <menuitem
+            parent="point_of_sale.menu_point_of_sale"
+            action="stock.action_inventory_form"
+            id="menu_pos_gt_ajuste"
+            sequence="40"
+            string="Ajustes de inventario"
+            groups="point_of_sale.group_pos_user" />
+
+    </data>
+</odoo>

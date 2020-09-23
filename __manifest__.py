@@ -20,9 +20,10 @@
         'views/pos_order_report_view.xml',
         'views/pos_order_view.xml',
         'views/account_views.xml',
+        'views/stock_views.xml',
+        'views/templates.xml',
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv',
-        'views/templates.xml',
     ],
     'qweb': [
         'static/src/xml/pos_gt.xml',
