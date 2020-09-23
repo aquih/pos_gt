@@ -23,6 +23,7 @@
         'views/pos_order_view.xml',
         'views/account_views.xml',
         'views/hr_views.xml',
+        'views/stock_view.xml',
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv',
     ],
