@@ -1,0 +1,3 @@
+[submodule "pos_restaurant_extra"]
+	path = pos_restaurant_extra
+	url = git@github.com:rocketgithub/pos_restaurant_extra.git
