@@ -56,4 +56,4 @@ class PosOrder(models.Model):
 class PosOrderLine(models.Model):
     _inherit = "pos.order.line"
 
-    note = fields.Char('Nota')
+    #note = fields.Char('Nota')
