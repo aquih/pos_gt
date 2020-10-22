@@ -162,7 +162,7 @@ models.Order = models.Order.extend({
                     'list': list,
                     'confirm': function(line) {
                         var extra_product = db.get_product_by_id(line.product_id[0]);
-                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { price_manually_set: true, extra_type: line.type, parent_line: new_line, adding: true } });
+                        order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { price_manually_set: true, extra_type: line.type, parent_line: new_line } });
                         show_extras_popup(current_list);
                     },
                     'cancel': function(line) {
@@ -209,6 +209,57 @@ models.Order = models.Order.extend({
     }
 })
 
+screens.OrderWidget.include({
+    set_value: function(val) {
+        var self = this;
+
+        var order = this.pos.get_order();
+    	if (order.get_selected_orderline()) {
+            var mode = this.numpad_state.get('mode');
+            if (mode === 'quantity') {
+                var line = order.get_selected_orderline();
+
+                if (order.get_orderlines()) {
+
+                    var to_remove = [];
+                    order.get_orderlines().forEach(function(l) {
+                        if (l.parent_line && l.parent_line.id == line.id) {
+                            to_remove.push(l);
+                        }
+                    });
+
+                    // Si se trata de modificar la linea extra y la linea no se puede modificar
+                    if (line.extra_type && line.extra_type == "fixed") {
+
+                        this.pos.gui.show_popup("error",{
+                            "title": "Parte de combo",
+                            "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
+                        });
+
+                    } else {
+
+                        // Si se trata de modificar una linea padre
+                        if (to_remove.length > 0) {
+                            to_remove.forEach(function(l) {
+                                order.remove_orderline(l);
+                            });
+                            order.remove_orderline(line);
+                        } else {
+                            self._super(val);
+                        }
+
+                    }
+
+                } else {
+
+                    self._super(val);
+
+                }
+            }
+        }
+    },
+});
+
 var _super_line = models.Orderline.prototype;
 models.Orderline = models.Orderline.extend({
 
@@ -216,56 +267,13 @@ models.Orderline = models.Orderline.extend({
         _super_line.init_from_JSON.apply(this,arguments);
         this.price_manually_set = json.price_manually_set
     },
-    set_quantity: function(quantity){
-        var line = this;
-        var order = this.pos.get_order();
 
-        // Si se está agregando la linea y se llama a set_auqntity, no es necesario validar nada
-        if (line.adding) {
-            line.adding = false;
-            _super_line.set_quantity.apply(this,arguments);
-            return;
-        }
-
-        if (line && order && order.get_orderlines()) {
-
-            var to_remove = [];
-            order.get_orderlines().forEach(function(l) {
-                if (l.parent_line && l.parent_line.id == line.id) {
-                    to_remove.push(l);
-                }
-            });
-
-            // Si se trata de modificar la linea extra y esta no se puede modificar
-            if (line.extra_type && line.extra_type == "fixed" && to_remove.length <= 0) {
-
-                this.pos.gui.show_popup("error",{
-                    "title": "Parte de combo",
-                    "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
-                });
-
-            } else {
-
-                // Si se trata de modificar una linea padre, se borra.
-                if (to_remove.length > 0) {
-                    to_remove.forEach(function(l) {
-                        order.remove_orderline(l);
-                    });
-                    order.remove_orderline(line);
-                } else {
-                    _super_line.set_quantity.apply(this,arguments);
-                }
-
-            }
-        } else {
-            _super_line.set_quantity.apply(this,arguments);
-        }
-    },
     export_as_JSON: function() {
         var json = _super_line.export_as_JSON.apply(this,arguments);
         json.price_manually_set = this.price_manually_set;
         return json
-    }
+    },
+
 })
 
 var DosPorUnoButton = screens.ActionButtonWidget.extend({
