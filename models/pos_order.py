@@ -65,4 +65,4 @@ class PosOrderLine(models.Model):
 
     # Compone un bug que no calcula los impuestos cuando se agrega una nueva
     # linea desde la interfaz normal de Odoo.
-    tax_ids = fields.Many2many('account.tax', string='Taxes')
+    tax_ids = fields.Many2many('account.tax', string='Taxes', readonly=False)
