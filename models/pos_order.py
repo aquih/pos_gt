@@ -7,8 +7,9 @@ import logging
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
+    pedido_origen_id = fields.Many2one('pos.order', string='Pedido Origen')
     nota_credito_creada = fields.Boolean('Nota credito creada', default=False)
-    permitir_devolver = fields.Boolean('Permitir devolver', related="session_id.config_id.permitir_devolver")
+    permitir_devolver = fields.Boolean('Permitir devolver', related='session_id.config_id.permitir_devolver')
 
     def _prepare_invoice_line(self, order_line):
         res = super(PosOrder, self)._prepare_invoice_line(order_line)
@@ -21,10 +22,19 @@ class PosOrder(models.Model):
             picking.cuenta_analitica_id = self.config_id.analytic_account_id
         res = super(PosOrder, self)._force_picking_done(picking)
 
-    def _prepare_invoice(self):
-        res = super(PosOrder, self)._prepare_invoice()
-        if self.amount_total < 0:
+    def _prepare_invoice_vals(self):
+        res = super(PosOrder, self)._prepare_invoice_vals()
+        if self.amount_total < 0 and self.config_id.diario_nota_credito_id:
             res['journal_id'] = self.config_id.diario_nota_credito_id.id
+        logging.warn(res)
+        return res
+        
+    def refund(self):
+        res = super(PosOrder, self).refund()
+        nuevo = self.browse(res['res_id'])
+        nuevo.pedido_origen_id = self
+        logging.warn(nuevo.pedido_origen_id)
+        
         return res
 
     def nota_credito(self):
@@ -43,10 +53,7 @@ class PosOrder(models.Model):
             })
 
         nuevo.action_pos_order_paid()
-        if 'factura_original_id' in self.env['account.move']._fields:
-            nuevo.with_context(default_factura_original_id=self.account_move.id).action_pos_order_invoice()
-        else:
-            nuevo.action_pos_order_invoice()
+        nuevo.action_pos_order_invoice()
 
         nuevo.nota_credito_creada = True
         self.nota_credito_creada = True
@@ -56,4 +63,6 @@ class PosOrder(models.Model):
 class PosOrderLine(models.Model):
     _inherit = "pos.order.line"
 
-    #note = fields.Char('Nota')
+    # Compone un bug que no calcula los impuestos cuando se agrega una nueva
+    # linea desde la interfaz normal de Odoo.
+    tax_ids = fields.Many2many('account.tax', string='Taxes')

@@ -10,6 +10,7 @@
                 <button name="nota_credito" string="Nota de Credito" type="object" attrs="{'invisible':['|', ('state','=','draft'), ('amount_total','&lt;',0)]}"/>
             </button>
             <field name="partner_id" position="after">
+                <field name="pedido_origen_id"/>
                 <field name="permitir_devolver" invisible="True"/>
             </field>
             <button name="refund" position="attributes">
