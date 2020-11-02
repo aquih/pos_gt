@@ -39,9 +39,6 @@
         <t t-jquery=".mode-button[data-mode='discount']" t-operation="replace">
             <button t-attf-class="#{ widget.pos.config.allow_discount ? 'mode-button' : '' }" data-mode='discount'>Disc</button>
         </t>
-        <t t-jquery=".mode-button[data-mode='price']" t-operation="replace">
-            <button t-attf-class="#{ widget.pos.config.allow_price_change ? 'mode-button' : '' }" data-mode='price'>Price</button>
-        </t>
     </t>
 
     <t t-extend="ClientDetailsEdit">

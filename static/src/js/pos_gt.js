@@ -250,12 +250,10 @@ screens.OrderWidget.include({
 
                     }
 
-                } else {
-
-                    self._super(val);
-
                 }
             }
+            
+            self._super(val);
         }
     },
 });
