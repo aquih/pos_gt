@@ -65,7 +65,9 @@ screens.ClientListScreenWidget.include({
         self._super();
         self.$('.new-customer').click(function(){
             var nit = self.$('.searchbox input').val()
-            self.display_client_details('edit', {
+            self.display_client_details('edit',{
+                'country_id': self.pos.company.country_id,
+                'state_id': self.pos.company.state_id,
                 'vat': nit,
             });
         });
