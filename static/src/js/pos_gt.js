@@ -218,7 +218,7 @@ screens.OrderWidget.include({
         var order = this.pos.get_order();
     	if (order.get_selected_orderline()) {
             var mode = this.numpad_state.get('mode');
-            if (mode === 'quantity') {
+            if (mode === 'quantity' && ( val == '' || val == 'remove')) {
                 var line = order.get_selected_orderline();
 
                 if (order.get_orderlines()) {
@@ -246,8 +246,6 @@ screens.OrderWidget.include({
                                 order.remove_orderline(l);
                             });
                             order.remove_orderline(line);
-                        } else {
-                            self._super(val);
                         }
 
                     }
