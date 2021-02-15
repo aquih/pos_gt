@@ -10,14 +10,6 @@
                 <div class="row mt16 o_settings_container">
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="allow_discount"/>
-                        </div>
-                        <div class="o_setting_right_pane">
-                            <label for="allow_discount" string="Permitir descuentos"/>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-md-6 o_setting_box">
-                        <div class="o_setting_left_pane">
                             <field name="ask_tag_number"/>
                         </div>
                         <div class="o_setting_right_pane">
@@ -41,22 +33,6 @@
                             <label for="default_client_id" string="Cliente por defecto"/>
                             <div class="content-group mt16">
                                 <field name="default_client_id"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-md-6 o_setting_box">
-                        <div class="o_setting_left_pane">
-                            <field name="opcion_dos_por_uno"/>
-                        </div>
-                        <div class="o_setting_right_pane">
-                            <label for="opcion_dos_por_uno" string="Opción 2x1"/>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-md-6 o_setting_box" attrs="{'invisible':[('opcion_dos_por_uno','=', False)]}">
-                        <div class="o_setting_right_pane">
-                            <label for="productos_ids" string="Productos 2x1"/>
-                            <div class="content-group mt16">
-                                <field name="productos_ids" widget="many2many_tags"/>
                             </div>
                         </div>
                     </div>

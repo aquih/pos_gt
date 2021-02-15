@@ -18,7 +18,6 @@
             action="account.action_bank_statement_tree"
             id="menu_pos_gt_extracto"
             sequence="40"
-            string="Extractos bancarios"
             groups="point_of_sale.group_pos_user" />
 
     </data>

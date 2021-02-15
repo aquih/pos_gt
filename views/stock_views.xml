@@ -27,7 +27,6 @@
             action="stock.action_inventory_form"
             id="menu_pos_gt_ajuste"
             sequence="40"
-            string="Ajustes de inventario"
             groups="point_of_sale.group_pos_user" />
 
     </data>

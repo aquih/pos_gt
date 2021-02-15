@@ -22,7 +22,7 @@ class PosGTExtraLine(models.Model):
     price_extra = fields.Monetary("Precio Extra", currency_field="company_currency_id", default=0.0)
     company_currency_id = fields.Many2one("res.currency", related="extra_id.company_id.currency_id", string="Divisa", readonly=True, store=True)
 
-    @api.onchange('product_id') # if these fields are changed, call method
+    @api.onchange('product_id')
     def product_id_change(self):
         self.name = self.product_id.name
 
