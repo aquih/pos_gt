@@ -356,9 +356,10 @@ screens.define_action_button({
     },
 });
 
+/*
 pos_db.include({
     _partner_search_string: function(partner){
-        var str =  partner.name;
+        var str =  partner.name || '';
         if(partner.ean13){
             str += '|' + partner.ean13;
         }
@@ -384,5 +385,6 @@ pos_db.include({
         return str;
     },
 })
+ */
 
 });
