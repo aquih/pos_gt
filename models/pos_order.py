@@ -33,7 +33,6 @@ class PosOrder(models.Model):
         res = super(PosOrder, self).refund()
         nuevo = self.browse(res['res_id'])
         nuevo.pedido_origen_id = self
-        logging.warn(nuevo.pedido_origen_id)
         
         return res
 
@@ -53,6 +52,7 @@ class PosOrder(models.Model):
             })
 
         nuevo.action_pos_order_paid()
+        nuevo._create_order_picking()
         nuevo.action_pos_order_invoice()
 
         nuevo.nota_credito_creada = True
