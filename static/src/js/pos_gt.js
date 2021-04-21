@@ -356,12 +356,11 @@ screens.define_action_button({
     },
 });
 
-/*
 pos_db.include({
     _partner_search_string: function(partner){
         var str =  partner.name || '';
-        if(partner.ean13){
-            str += '|' + partner.ean13;
+        if(partner.barcode){
+            str += '|' + partner.barcode;
         }
         if(partner.address){
             str += '|' + partner.address;
@@ -381,10 +380,9 @@ pos_db.include({
         if(partner.ref){
             str += '|' + partner.ref;
         }
-        str = '' + partner.id + ':' + str.replace(':','') + '\n';
+        str = '' + partner.id + ':' + str.replace(':', '').replace(/\n/g, ' ') + '\n';
         return str;
     },
 })
- */
 
 });
