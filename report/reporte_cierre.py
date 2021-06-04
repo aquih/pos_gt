@@ -57,12 +57,12 @@ class ReporteCierre(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        self.model = 'pos.session'
-        docs = self.env[self.model].browse(docids)
+        model = 'pos.session'
+        docs = self.env[model].browse(docids)
 
         return {
             'doc_ids': self.ids,
-            'doc_model': self.model,
+            'doc_model': model,
             'docs': docs,
             'lineas_ventas': self.lineas_ventas,
             'total_ventas': self.total_ventas,
