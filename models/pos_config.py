@@ -10,4 +10,4 @@ class PosConfig(models.Model):
     default_client_id = fields.Many2one("res.partner", string="Cliente CF")
     analytic_account_id = fields.Many2one("account.analytic.account", string="Cuenta Analítica")
     diario_nota_credito_id = fields.Many2one("account.journal", string="Diario para Nota de Crédito")
-    permitir_devolver = fields.Boolean('Permitir devolver')
+    permitir_devolver = fields.Boolean("Permitir devolver")

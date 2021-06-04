@@ -17,11 +17,6 @@ class PosOrder(models.Model):
             res['analytic_account_id'] = order_line.order_id.config_id.analytic_account_id.id
         return res
 
-    def _force_picking_done(self, picking):
-        if self.config_id.analytic_account_id:
-            picking.cuenta_analitica_id = self.config_id.analytic_account_id
-        res = super(PosOrder, self)._force_picking_done(picking)
-
     def _prepare_invoice_vals(self):
         res = super(PosOrder, self)._prepare_invoice_vals()
         if self.amount_total < 0 and self.config_id.diario_nota_credito_id:
@@ -33,7 +28,6 @@ class PosOrder(models.Model):
         res = super(PosOrder, self).refund()
         nuevo = self.browse(res['res_id'])
         nuevo.pedido_origen_id = self
-        logging.warn(nuevo.pedido_origen_id)
         
         return res
 
@@ -41,8 +35,8 @@ class PosOrder(models.Model):
         if self.nota_credito_creada:
             raise UserError('La nota de crédito ya ha sido creada para este pedido.')
 
-        accion = self.refund()
-        nuevo = self.env['pos.order'].browse(accion['res_id'])
+        res = self.refund()
+        nuevo = self.browse(res['res_id'])
         for p in self.payment_ids:
             nuevo.add_payment({
                 'name': _('return'),
@@ -58,11 +52,11 @@ class PosOrder(models.Model):
         nuevo.nota_credito_creada = True
         self.nota_credito_creada = True
 
-        return accion
+        return res
 
-class PosOrderLine(models.Model):
-    _inherit = "pos.order.line"
+#class PosOrderLine(models.Model):
+#    _inherit = "pos.order.line"
 
     # Compone un bug que no calcula los impuestos cuando se agrega una nueva
     # linea desde la interfaz normal de Odoo.
-    tax_ids = fields.Many2many('account.tax', string='Taxes', readonly=False)
+#    tax_ids = fields.Many2many('account.tax', string='Taxes', readonly=False)
