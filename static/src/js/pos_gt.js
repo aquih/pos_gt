@@ -9,7 +9,8 @@ odoo.define('pos_gt.pos_gt', function (require) {
     const PosComponent = require('point_of_sale.PosComponent');
 
     const Registries = require('point_of_sale.Registries');
-    
+    const { Gui } = require('point_of_sale.Gui');
+
     const { useListener } = require('web.custom_hooks');
     const { useState } = owl.hooks;
 
@@ -39,11 +40,10 @@ odoo.define('pos_gt.pos_gt', function (require) {
     models.load_fields('product.product', 'extras_id');
     models.load_fields('res.partner', 'ref');
     
-    /*
     models.load_models({
         model: 'pos_gt.extra',
         fields: [],
-        loaded: function(self,extras){
+        loaded: function(self, extras){
             var extras_by_id = {};
             extras.forEach(function(e) {
                 extras_by_id[e.id] = e
@@ -55,7 +55,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
     models.load_models({
         model: 'pos_gt.extra.line',
         fields: [],
-        loaded: function(self,extra_lines){
+        loaded: function(self, extra_lines){
             var extra_lines_by_id = {};
             extra_lines.forEach(function(e) {
                 if (!(e.extra_id[0] in extra_lines_by_id)) {
@@ -66,7 +66,6 @@ odoo.define('pos_gt.pos_gt', function (require) {
             self.product_extra_lines = extra_lines_by_id;
         },
     });
-    */
     
     const PosGTClientListScreen = (ClientListScreen) =>
         class extends ClientListScreen {
@@ -83,36 +82,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
         };
     
     Registries.Component.extend(ClientListScreen, PosGTClientListScreen);
-    
-    pos_db.include({
-        _partner_search_string: function(partner){
-            var str =  partner.name;
-            if(partner.ean13){
-                str += '|' + partner.ean13;
-            }
-            if(partner.address){
-                str += '|' + partner.address;
-            }
-            if(partner.phone){
-                str += '|' + partner.phone.split(' ').join('');
-            }
-            if(partner.mobile){
-                str += '|' + partner.mobile.split(' ').join('');
-            }
-            if(partner.email){
-                str += '|' + partner.email;
-            }
-            if(partner.vat){
-                str += '|' + partner.vat;
-            }
-            if(partner.ref){
-                str += '|' + partner.ref;
-            }
-            str = '' + partner.id + ':' + str.replace(':','') + '\n';
-            return str;
-        },
-    })
-    
+        
     class TakeOutButton extends PosComponent {
         constructor() {
             super(...arguments);
@@ -180,138 +150,117 @@ odoo.define('pos_gt.pos_gt', function (require) {
         }
     })
 
-    /*
     var _super_order = models.Order.prototype;
     models.Order = models.Order.extend({
         add_product: function(product, options) {
-            options = options || {};
-
-            function show_extras_popup(current_list) {
-
-                if (gui.has_popup()) {
-                    setTimeout(function(){
-                        show_extras_popup(current_list)
-                    }, 800)
-                    return;
-                }
-
-                var list = current_list.pop();
-                if (list) {
-                    gui.show_popup('selection', {
-                        'title': 'Extras',
-                        'list': list,
-                        'confirm': function(line) {
-                            var extra_product = db.get_product_by_id(line.product_id[0]);
-                            order.add_product(extra_product, { price: line.price_extra, quantity: line.qty, extras: { price_manually_set: true, extra_type: line.type, parent_line: new_line } });
-                            show_extras_popup(current_list);
-                        },
-                        'cancel': function(line) {
-                            show_extras_popup(current_list);
-                        },
-                    });
-                }
-            }
-
-            options.merge = false;
-            _super_order.add_product.apply(this, [product, options]);
-
-            var new_line = this.get_last_orderline();
             var order = this.pos.get_order();
-            var db = this.pos.db;
-            var gui = this.pos.gui;
-            var chrome = this.pos.chrome;
+            var pos = this.pos;
+            var db = pos.db;
             var extras_db = this.pos.product_extras;
             var extra_lines_db = this.pos.product_extra_lines;
 
-            if (options.cargar_extras || options.cargar_extras == null) {
-                if (product.extras_id && product.extras_id.length > 0) {
-                    var extra_lists = [];
-                    product.extras_id.forEach(function(extra_id) {
-                        var extra = extras_db[extra_id];
-                        var extra_lines = extra_lines_db[extra_id];
-
-                        if (extra_lines) {
-                            var list = []
-                            extra_lines.forEach(function(line) {
-                                line.type = extra.type;
-                                list.push({
-                                    label: line.name + " ( "+line.qty+" ) - " + chrome.format_currency(line.price_extra),
-                                    item: line,
-                                });
-                            })
-                            extra_lists.push(list);
-                        }
-                    })
-
-                    show_extras_popup(extra_lists);
+            async function show_extras_popup(current_list, parent_line) {
+                var list = current_list.pop();
+                if (list) {
+                    const { confirmed, payload } = await Gui.showPopup('SelectionPopup', {
+                        'title': 'Extras',
+                        'list': list
+                    });
+                    if (confirmed) {
+                        var extra_product = db.get_product_by_id(payload.product_id[0]);
+                        order.add_product(extra_product, { price: payload.price_extra, quantity: payload.qty, extras: { price_manually_set: true, extra_type: payload.type, parent_line: parent_line } });
+                        show_extras_popup(current_list, parent_line);
+                    }
                 }
+            }
+
+            options = options || {};
+            options.merge = false;
+            
+            _super_order.add_product.apply(this, [product, options]);
+            var new_line = this.get_last_orderline();
+
+            if (product.extras_id && product.extras_id.length > 0) {
+                var extra_lists = [];
+                product.extras_id.forEach(function(extra_id) {
+                    var extra = extras_db[extra_id];
+                    var extra_lines = extra_lines_db[extra_id];
+
+                    if (extra_lines) {
+                        var list = []
+                        extra_lines.forEach(function(line) {
+                            line.type = extra.type;
+                            list.push({
+                                id: line.id,
+                                label: line.name + " ( "+line.qty+" ) - " + pos.format_currency(line.price_extra),
+                                isSelected: false,
+                                item: line,
+                            });
+                        })
+                        extra_lists.push(list);
+                    }
+                })
+
+                show_extras_popup(extra_lists, new_line);
             }
         }
     })
-
-    screens.OrderWidget.include({
-        set_value: function(val) {
-            var self = this;
-
-            var order = this.pos.get_order();
-            if (order.get_selected_orderline()) {
-                var mode = this.numpad_state.get('mode');
-                if (mode === 'quantity' && ( val == '' || val == 'remove')) {
-                    var line = order.get_selected_orderline();
-
-                    if (order.get_orderlines()) {
-
-                        var to_remove = [];
-                        order.get_orderlines().forEach(function(l) {
-                            if (l.parent_line && l.parent_line.id == line.id) {
-                                to_remove.push(l);
-                            }
-                        });
-
-                        // Si se trata de modificar la linea extra y la linea no se puede modificar
-                        if (line.extra_type && line.extra_type == "fixed") {
-
-                            this.pos.gui.show_popup("error",{
-                                "title": "Parte de combo",
-                                "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
-                            });
-
-                        } else {
-
-                            // Si se trata de modificar una linea padre
-                            if (to_remove.length > 0) {
-                                to_remove.forEach(function(l) {
-                                    order.remove_orderline(l);
-                                });
-                                order.remove_orderline(line);
-                            }
-
-                        }
-
-                    }
-                }
-                
-                self._super(val);
-            }
-        },
-    });
-
+    
     var _super_line = models.Orderline.prototype;
     models.Orderline = models.Orderline.extend({
-
         init_from_JSON: function(json) {
             _super_line.init_from_JSON.apply(this,arguments);
             this.price_manually_set = json.price_manually_set
         },
-
+        
         export_as_JSON: function() {
             var json = _super_line.export_as_JSON.apply(this,arguments);
             json.price_manually_set = this.price_manually_set;
             return json
         },
-
     })
+    
+    const PosGTProductScreen = (ProductScreen) =>
+        class extends ProductScreen {
+            _setValue(val) {
+                var order = this.env.pos.get_order();
+                if (order.get_selected_orderline()) {
+                    var mode = this.state.numpadMode;
+                    if (mode === 'quantity' && ( val == '' || val == 'remove')) {
+                        var line = order.get_selected_orderline();
+                        if (order.get_orderlines()) {
+                            
+                            var to_remove = [];
+                            order.get_orderlines().forEach(function(l) {
+                                if (l.parent_line && l.parent_line.id == line.id) {
+                                    to_remove.push(l);
+                                }
+                            });
+                            
+                            // Si se trata de modificar la linea extra y la linea no se puede modificar
+                            if (line.extra_type && line.extra_type == "fixed") {
+                                this.showPopup("ErrorPopup",{
+                                    "title": "Parte de combo",
+                                    "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
+                                });
+                                
+                            // Si se trata de modificar una linea padre
+                            } else if (to_remove.length > 0) {
+                                to_remove.forEach(function(l) {
+                                    order.remove_orderline(l);
+                                });
+                                order.remove_orderline(line);                                
+                            }
+                            
+                        }
+                    }
+                    
+                    super._setValue(val);
+                }
+            }
+        };
+    
+    Registries.Component.extend(ProductScreen, PosGTProductScreen);
 
-    */
 
 });
