@@ -218,7 +218,7 @@ screens.OrderWidget.include({
         var order = this.pos.get_order();
     	if (order.get_selected_orderline()) {
             var mode = this.numpad_state.get('mode');
-            if (mode === 'quantity' && ( val == '' || val == 'remove')) {
+            if (mode === 'quantity') {
                 var line = order.get_selected_orderline();
 
                 if (order.get_orderlines()) {
@@ -237,6 +237,7 @@ screens.OrderWidget.include({
                             "title": "Parte de combo",
                             "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
                         });
+                        return;
 
                     } else {
 
