@@ -21,7 +21,6 @@
         'views/pos_order_view.xml',
         'views/account_views.xml',
         'views/stock_views.xml',
-        'views/templates.xml',
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv',
     ],
@@ -30,6 +29,14 @@
     ],
     'installable': True,
     'auto_install': False,
+    'assets': {
+        'point_of_sale.assets': [
+            'pos_gt/static/src/js/pos_gt.js',
+        ],
+        'web.assets_qweb': [
+            'pos_gt/static/src/xml/**/*',
+        ],
+    }
 }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
