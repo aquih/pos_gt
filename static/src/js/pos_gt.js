@@ -74,7 +74,8 @@ odoo.define('pos_gt.pos_gt', function (require) {
                 this.state.editModeProps.partner.vat = this.state.query;
             }
             async saveChanges(event) {
-                if (!('vat' in event.detail.processedChanges)) {
+                // Solo cambiar el valor cuando es un nuevo contaco
+                if (!('id' in this.state.editModeProps.partner) && !('vat' in event.detail.processedChanges)) {
                     event.detail.processedChanges.vat = this.state.query;
                 }
                 super.saveChanges(event);
