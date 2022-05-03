@@ -13,7 +13,7 @@
     'depends': ['point_of_sale', 'hr'],
     'data': [
         'views/pos_config_view.xml',
-        'views/pos_extra_view.xml',
+        #'views/pos_extra_view.xml',
         'views/res_users_view.xml',
         'views/reports.xml',
         'views/reporte_cierre.xml',
