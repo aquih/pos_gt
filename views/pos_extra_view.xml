@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!--
 
         <record id="pos_gt_extra_tree_view" model="ir.ui.view">
             <field name="name">pos_gt.extra.tree.view</field>
@@ -76,6 +77,7 @@
             id="menu_pos_gt_extra"
             sequence="35"
             groups="point_of_sale.group_pos_manager" />
+        -->
 
     </data>
 
