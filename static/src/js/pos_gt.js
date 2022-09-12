@@ -147,6 +147,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
             if (this.config.invoice_journal_id) {
                 new_order.set_to_invoice(true);
             }
+            return new_order;
         }
     })
 
