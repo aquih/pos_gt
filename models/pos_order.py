@@ -29,36 +29,62 @@ class PosOrder(models.Model):
         logging.warn(res)
         return res
         
-    def refund(self):
-        res = super(PosOrder, self).refund()
-        nuevo = self.browse(res['res_id'])
-        nuevo.pedido_origen_id = self
-        logging.warn(nuevo.pedido_origen_id)
-        
-        return res
-
     def nota_credito(self):
-        if self.nota_credito_creada:
-            raise UserError('La nota de crédito ya ha sido creada para este pedido.')
-
-        accion = self.refund()
-        nuevo = self.env['pos.order'].browse(accion['res_id'])
-        for p in self.payment_ids:
-            nuevo.add_payment({
-                'name': _('return'),
-                'pos_order_id': nuevo.id,
-                'amount': -p.amount,
-                'payment_date': fields.Date.context_today(self),
-                'payment_method_id': p.payment_method_id.id,
+        """Create a copy of order  for refund order"""
+        refund_orders = self.env['pos.order']
+        for order in self:
+            current_session = self.env['pos.session'].search([('user_id','=',self.env.user.id), ('state','=','opened')])
+            if not current_session:
+                raise UserError('Para poder generar nota de crédito tiene que tener una sesión abierta con su usuario')
+            refund_order = order.copy({
+                'name': order.name + _(' REFUND'),
+                'session_id': current_session.id,
+                'date_order': fields.Datetime.now(),
+                'pos_reference': order.pos_reference,
+                'lines': False,
+                'amount_tax': -order.amount_tax,
+                'amount_total': -order.amount_total,
+                'amount_paid': 0,
             })
+            for line in order.lines:
+                PosOrderLineLot = self.env['pos.pack.operation.lot']
+                for pack_lot in line.pack_lot_ids:
+                    PosOrderLineLot += pack_lot.copy()
+                line.copy({
+                    'name': line.name + _(' REFUND'),
+                    'qty': -line.qty,
+                    'order_id': refund_order.id,
+                    'price_subtotal': -line.price_subtotal,
+                    'price_subtotal_incl': -line.price_subtotal_incl,
+                    'pack_lot_ids': PosOrderLineLot,
+                    })
+            refund_orders |= refund_order
+        
+            #for p in self.payment_ids:
+            #    refund_orders.add_payment({
+            #        'name': _('return'),
+            #        'pos_order_id': refund_orders.id,
+            #        'amount': -p.amount,
+            #        'payment_date': fields.Date.context_today(self),
+            #        'payment_method_id': p.payment_method_id.id,
+            #    })
 
-        nuevo.action_pos_order_paid()
-        nuevo.action_pos_order_invoice()
+            #refund_orders.action_pos_order_paid()
+            #refund_orders.action_pos_order_invoice()
 
-        nuevo.nota_credito_creada = True
-        self.nota_credito_creada = True
+            refund_orders.nota_credito_creada = True
+            order.nota_credito_creada = True
 
-        return accion
+        return {
+            'name': _('Return Products'),
+            'view_mode': 'form',
+            'res_model': 'pos.order',
+            'res_id': refund_orders.ids[0],
+            'view_id': False,
+            'context': self.env.context,
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+        }
 
 class PosOrderLine(models.Model):
     _inherit = "pos.order.line"
