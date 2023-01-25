@@ -60,20 +60,7 @@ class PosOrder(models.Model):
                     })
             refund_orders |= refund_order
         
-            #for p in self.payment_ids:
-            #    refund_orders.add_payment({
-            #        'name': _('return'),
-            #        'pos_order_id': refund_orders.id,
-            #        'amount': -p.amount,
-            #        'payment_date': fields.Date.context_today(self),
-            #        'payment_method_id': p.payment_method_id.id,
-            #    })
-
-            #refund_orders.action_pos_order_paid()
-            #refund_orders.action_pos_order_invoice()
-
-            refund_orders.nota_credito_creada = True
-            order.nota_credito_creada = True
+        refund_orders.pedido_origen_id = self
 
         return {
             'name': _('Return Products'),
