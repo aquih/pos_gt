@@ -31,6 +31,9 @@ class PosOrder(models.Model):
         
     def nota_credito(self):
         """Create a copy of order  for refund order"""
+        if self.nota_credito_creada:
+            raise UserError('La nota de crédito ya ha sido creada para este pedido.')
+            
         refund_orders = self.env['pos.order']
         for order in self:
             current_session = self.env['pos.session'].search([('user_id','=',self.env.user.id), ('state','=','opened')])
@@ -61,6 +64,7 @@ class PosOrder(models.Model):
             refund_orders |= refund_order
         
         refund_orders.pedido_origen_id = self
+        self.nota_credito_creada = True
 
         return {
             'name': _('Return Products'),
