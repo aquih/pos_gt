@@ -3,7 +3,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
     const models = require('point_of_sale.models');
     const pos_db = require('point_of_sale.DB');
-    
+
     const ClientListScreen = require('point_of_sale.ClientListScreen');
     const ProductScreen = require('point_of_sale.ProductScreen');
     const PosComponent = require('point_of_sale.PosComponent');
@@ -39,7 +39,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
     models.load_fields('product.product', 'extras_id');
     models.load_fields('res.partner', 'ref');
-    
+
     models.load_models({
         model: 'pos_gt.extra',
         fields: [],
@@ -51,7 +51,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
             self.product_extras = extras_by_id;
         },
     });
-    
+
     models.load_models({
         model: 'pos_gt.extra.line',
         fields: [],
@@ -66,7 +66,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
             self.product_extra_lines = extra_lines_by_id;
         },
     });
-    
+
     const PosGTClientListScreen = (ClientListScreen) =>
         class extends ClientListScreen {
             activateEditMode(event) {
@@ -81,9 +81,9 @@ odoo.define('pos_gt.pos_gt', function (require) {
                 super.saveChanges(event);
             }
         };
-    
+
     Registries.Component.extend(ClientListScreen, PosGTClientListScreen);
-        
+
     class TakeOutButton extends PosComponent {
         constructor() {
             super(...arguments);
@@ -95,19 +95,20 @@ odoo.define('pos_gt.pos_gt', function (require) {
             this.state.take_out = !this.state.take_out;
             const order = this.env.pos.get_order();
             order.take_out = this.state.take_out
+            order.set_take_out_state(this.state.take_out)
         }
     }
     TakeOutButton.template = 'TakeOutButton';
-    
+
     ProductScreen.addControlButton({
         component: TakeOutButton,
         condition: function() {
             return this.env.pos.config.takeout_option;
         },
     });
-    
+
     Registries.Component.add(TakeOutButton);
-    
+
     class TagNumberButton extends PosComponent {
         constructor() {
             super(...arguments);
@@ -128,14 +129,14 @@ odoo.define('pos_gt.pos_gt', function (require) {
         }
     }
     TagNumberButton.template = 'TagNumberButton';
-    
+
     ProductScreen.addControlButton({
         component: TagNumberButton,
         condition: function() {
             return this.env.pos.config.ask_tag_number;
         },
     });
-    
+
     Registries.Component.add(TagNumberButton);
 
     var _super_posmodel = models.PosModel.prototype;
@@ -154,6 +155,10 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
     var _super_order = models.Order.prototype;
     models.Order = models.Order.extend({
+        initialize: function() {
+            _super_order.initialize.apply(this,arguments);
+            this.set_take_out_state(false);
+        },
         add_product: function(product, options) {
             var order = this.pos.get_order();
             var pos = this.pos;
@@ -178,7 +183,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
             options = options || {};
             options.merge = false;
-            
+
             _super_order.add_product.apply(this, [product, options]);
             var new_line = this.get_last_orderline();
 
@@ -205,23 +210,33 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
                 show_extras_popup(extra_lists, new_line);
             }
+        },
+        get_take_out_state: function(){
+            return this.get('take_out');
+        },
+
+        set_take_out_state: function(take_out){
+            this.set({
+              take_out: take_out
+            });
         }
+
     })
-    
+
     var _super_line = models.Orderline.prototype;
     models.Orderline = models.Orderline.extend({
         init_from_JSON: function(json) {
             _super_line.init_from_JSON.apply(this,arguments);
             this.price_manually_set = json.price_manually_set
         },
-        
+
         export_as_JSON: function() {
             var json = _super_line.export_as_JSON.apply(this,arguments);
             json.price_manually_set = this.price_manually_set;
             return json
         },
     })
-    
+
     const PosGTProductScreen = (ProductScreen) =>
         class extends ProductScreen {
             _setValue(val) {
@@ -231,37 +246,37 @@ odoo.define('pos_gt.pos_gt', function (require) {
                     if (mode === 'quantity' && ( val == '' || val == 'remove')) {
                         var line = order.get_selected_orderline();
                         if (order.get_orderlines()) {
-                            
+
                             var to_remove = [];
                             order.get_orderlines().forEach(function(l) {
                                 if (l.parent_line && l.parent_line.id == line.id) {
                                     to_remove.push(l);
                                 }
                             });
-                            
+
                             // Si se trata de modificar la linea extra y la linea no se puede modificar
                             if (line.extra_type && line.extra_type == "fixed") {
                                 this.showPopup("ErrorPopup",{
                                     "title": "Parte de combo",
                                     "body":  "Esta linea no se puede modificar por que es parte de un combo, solo puede borrar todo el combo borrando la linea principal.",
                                 });
-                                
+
                             // Si se trata de modificar una linea padre
                             } else if (to_remove.length > 0) {
                                 to_remove.forEach(function(l) {
                                     order.remove_orderline(l);
                                 });
-                                order.remove_orderline(line);                                
+                                order.remove_orderline(line);
                             }
-                            
+
                         }
                     }
-                    
+
                     super._setValue(val);
                 }
             }
         };
-    
+
     Registries.Component.extend(ProductScreen, PosGTProductScreen);
 
 });
