@@ -153,8 +153,17 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
     var _super_order = models.Order.prototype;
     models.Order = models.Order.extend({
+        initialize: function() {
+             _super_order.initialize.apply(this,arguments);
+             this.take_out = false;
+        },
+        export_for_printing: function() {
+            var json = _super_order.export_for_printing.apply(this,arguments);
+            json.take_out = this.take_out;
+            return json;
+        },
         add_product: function(product, options) {
-            var order = this.pos.get_order();
+            var order = this;
             var pos = this.pos;
             var db = pos.db;
             var extras_db = this.pos.product_extras;
