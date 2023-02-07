@@ -21,8 +21,11 @@ class PosOrder(models.Model):
         res = super(PosOrder, self)._prepare_invoice_vals()
         if self.amount_total < 0 and self.config_id.diario_nota_credito_id:
             res['journal_id'] = self.config_id.diario_nota_credito_id.id
-        logging.warn(res)
         return res
+    
+    def _create_order_picking(self):
+        self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
+        super(PosOrder, self)._create_order_picking()
         
     def refund(self):
         res = super(PosOrder, self).refund()
@@ -55,9 +58,11 @@ class PosOrder(models.Model):
 
         return res
 
-#class PosOrderLine(models.Model):
-#    _inherit = "pos.order.line"
+class PosSession(models.Model):
+    _inherit = 'pos.session'
 
-    # Compone un bug que no calcula los impuestos cuando se agrega una nueva
-    # linea desde la interfaz normal de Odoo.
-#    tax_ids = fields.Many2many('account.tax', string='Taxes', readonly=False)
+    def _create_picking_at_end_of_session(self):
+        self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
+        super(PosSession, self)._create_picking_at_end_of_session()
+
+

@@ -16,7 +16,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
 
     models.load_models({
         model: 'account.journal',
-        fields: [],
+        fields: ['direccion'],
         domain: function(self){ return [['id','=',self.config.invoice_journal_id[0]]]; },
         loaded: function(self,journals){
             if (journals.length > 0) {
@@ -148,6 +148,7 @@ odoo.define('pos_gt.pos_gt', function (require) {
             if (this.config.invoice_journal_id) {
                 new_order.set_to_invoice(true);
             }
+            return new_order;
         }
     })
 
@@ -271,6 +272,5 @@ odoo.define('pos_gt.pos_gt', function (require) {
         };
     
     Registries.Component.extend(ProductScreen, PosGTProductScreen);
-
 
 });
