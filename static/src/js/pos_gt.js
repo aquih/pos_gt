@@ -273,4 +273,10 @@ odoo.define('pos_gt.pos_gt', function (require) {
     
     Registries.Component.extend(ProductScreen, PosGTProductScreen);
 
+    return {
+        'models': models,
+        'TakeOutButton': TakeOutButton,
+        'TagNumberButton': TagNumberButton,
+    }
+
 });
