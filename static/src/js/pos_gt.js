@@ -70,8 +70,8 @@ odoo.define('pos_gt.pos_gt', function (require) {
     const PosGTClientListScreen = (ClientListScreen) =>
         class extends ClientListScreen {
             activateEditMode(event) {
-                super.activateEditMode(event);
                 this.state.editModeProps.partner.vat = this.state.query;
+                super.activateEditMode(event);
             }
             async saveChanges(event) {
                 // Solo cambiar el valor cuando es un nuevo contaco
