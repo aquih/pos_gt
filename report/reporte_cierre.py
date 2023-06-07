@@ -38,21 +38,19 @@ class ReporteCierre(models.AbstractModel):
     def lineas_egresos(self, docs):
         diarios = {}
         for s in docs:
-            if s.cash_register_id:
-                for l in s.cash_register_id.line_ids:
-                    if l.amount < 0:
-                        if s.cash_register_id.journal_id.id not in diarios:
-                            diarios[s.cash_register_id.journal_id.id] = {'diario': s.cash_register_id.journal_id, 'total': 0}
-                        diarios[s.cash_register_id.journal_id.id]['total'] += l.amount
+            for l in s.statement_line_ids:
+                if l.amount < 0:
+                    if l.journal_id.id not in diarios:
+                        diarios[l.journal_id.id] = {'diario': l.journal_id, 'total': 0}
+                    diarios[l.journal_id.id]['total'] += l.amount
         return diarios.values()
 
     def total_egresos(self, docs):
         total = 0
         for s in docs:
-            if s.cash_register_id:
-                for l in s.cash_register_id.line_ids:
-                    if l.amount < 0:
-                        total += l.amount
+            for l in s.statement_line_ids:
+                if l.amount < 0:
+                    total += l.amount
         return total
 
     @api.model

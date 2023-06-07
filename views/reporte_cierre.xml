@@ -12,36 +12,36 @@
                         <table class="table table-condensed mb4">
                             <tbody>
                                 <tr>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         Inicial
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         Transacciones
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         Esperado
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         Actual
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         Diferencia
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="sum([x.cash_register_balance_start for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="sum([x.cash_register_total_entry_encoding for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="sum([x.cash_register_balance_end for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="sum([x.cash_register_balance_end_real for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="sum([x.cash_register_difference for x in docs])" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
@@ -57,7 +57,7 @@
                                     <th>
                                         Métod de pago
                                     </th>
-                                    <th class="text-right">
+                                    <th class="text-end">
                                         Total
                                     </th>
                                 </tr>
@@ -65,13 +65,13 @@
                             <tbody>
                                 <tr t-foreach="lineas_ingresos(docs)" t-as="linea">
                                     <td><span t-esc="linea['metodo'].name"/></td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="linea['total']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="total_ingresos(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
@@ -86,7 +86,7 @@
                                     <th>
                                         Diario
                                     </th>
-                                    <th class="text-right">
+                                    <th class="text-end">
                                         Total
                                     </th>
                                 </tr>
@@ -94,13 +94,13 @@
                             <tbody>
                                 <tr t-foreach="lineas_egresos(docs)" t-as="linea">
                                     <td><span t-esc="linea['diario'].name"/></td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="linea['total']" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="total_egresos(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
@@ -116,7 +116,7 @@
                                     <th>Fecha</th>
                                     <th>Cliente</th>
                                     <th>Factura</th>
-                                    <th class="text-right">Total</th>
+                                    <th class="text-end">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,7 +125,7 @@
                                     <td><span t-field="order.date_order"/></td>
                                     <td><span t-field="order.partner_id"/></td>
                                     <td><span t-field="order.account_move.name"/></td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-field="order.amount_total" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
                                     </td>
                                 </tr>
@@ -134,7 +134,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <span t-esc="total_ventas(docs)" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
                                     </td>
                                 </tr>
