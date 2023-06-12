@@ -3,14 +3,14 @@
 
 {
     'name': 'Point of Sale para Guatemala',
-    'version': '3.0',
+    'version': '4.0',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Cambios al Punto de Venta para el manejo en Guatemala',
     'description': """ Cambios al Punto de Venta para el manejo en Guatemala """,
     'author': 'Rodrigo Fernandez',
     'website': 'http://aquih.com',
-    'depends': ['point_of_sale', 'hr'],
+    'depends': ['l10n_gt_extra', 'pos_hr'],
     'data': [
         'views/pos_config_view.xml',
         'views/pos_extra_view.xml',
@@ -23,19 +23,12 @@
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv',
     ],
-    'qweb': [
-        'static/src/xml/pos_gt.xml',
-    ],
     'installable': True,
     'auto_install': False,
     'assets': {
         'point_of_sale.assets': [
-            'pos_gt/static/src/js/pos_gt.js',
-        ],
-        'web.assets_qweb': [
+            'pos_gt/static/src/js/**/*',
             'pos_gt/static/src/xml/**/*',
         ],
     }
 }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
