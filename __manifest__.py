@@ -30,5 +30,6 @@
             'pos_gt/static/src/js/**/*',
             'pos_gt/static/src/xml/**/*',
         ],
-    }
+    },
+    'license': 'Other OSI approved licence',
 }
