@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from odoo import models, fields, api, _
+import logging
 
 class PosConfig(models.Model):
     _inherit = 'pos.config'
