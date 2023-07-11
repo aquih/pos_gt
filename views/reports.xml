@@ -2,14 +2,13 @@
 <odoo>
     <data>
 
-        <report
-            id="pos_gt_reporte_cierre"
-            string="Cierre de caja"
-            model="pos.session"
-            report_type="qweb-pdf"
-            file="pos_gt.reporte_cierre"
-            name="pos_gt.reporte_cierre"
-        />
+        <record id="pos_gt_reporte_cierre" model="ir.actions.report">
+            <field name="name">Cierre de caja</field>
+            <field name="model">pos.session</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pos_gt.reporte_cierre</field>
+            <field name="report_file">pos_gt.reporte_cierre</field>
+        </record>
 
     </data>
 </odoo>
