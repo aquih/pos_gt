@@ -71,7 +71,7 @@ class PosSession(models.Model):
     
     def _pos_data_process(self, loaded_data):
         super()._pos_data_process(loaded_data)
-        loaded_data['diario_facturacion'] = { 'nombre': self.config_id.invoice_journal_id.name, 'direccion': self.config_id.invoice_journal_id.direccion.street }
+        loaded_data['diario_facturacion'] = { 'nombre': self.config_id.invoice_journal_id.direccion.name, 'direccion': self.config_id.invoice_journal_id.direccion.street }
     
     def _loader_params_product_product(self):
         result = super(PosSession, self)._loader_params_product_product()
@@ -102,5 +102,3 @@ class PosSession(models.Model):
     def _create_picking_at_end_of_session(self):
         self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
         super(PosSession, self)._create_picking_at_end_of_session()
-
-
