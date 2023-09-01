@@ -84,7 +84,7 @@ class PosSession(models.Model):
         return result
 
     def _loader_params_pos_gt_extra(self):
-        return {'search_params': {'domain': [('company_id', '=', self.config_id.company_id.id)], 'fields': ['name', 'sequence', 'type'], 'load': False}}
+        return {'search_params': {'domain': ['|', ('company_id', '=', False), ('company_id', '=', self.config_id.company_id.id)], 'fields': ['name', 'sequence', 'type'], 'load': False}}
     
     def _get_pos_ui_pos_gt_extra(self, params):
         extras = self.env['pos_gt.extra'].search_read(**params['search_params'])
@@ -93,7 +93,7 @@ class PosSession(models.Model):
             e['lineas'] = [];
             extras_por_id[e['id']] = e
 
-        lineas = self.env['pos_gt.extra.line'].search_read(domain=[('extra_id.company_id', '=', self.config_id.company_id.id)], fields=['name', 'extra_id', 'product_id', 'qty', 'price_extra'], load=False)
+        lineas = self.env['pos_gt.extra.line'].search_read(domain=['|', ('extra_id.company_id', '=', False), ('extra_id.company_id', '=', self.config_id.company_id.id)], fields=['name', 'extra_id', 'product_id', 'qty', 'price_extra'], load=False)
         for l in lineas:
             extras_por_id[l['extra_id']]['lineas'].append(l)
         
