@@ -71,7 +71,7 @@ class PosSession(models.Model):
     
     def _pos_data_process(self, loaded_data):
         super()._pos_data_process(loaded_data)
-        loaded_data['diario_facturacion'] = { 'nombre': self.config_id.invoice_journal_id.name, 'direccion': self.config_id.invoice_journal_id.direccion.street }
+        loaded_data['diario_facturacion'] = { 'nombre': self.config_id.invoice_journal_id.direccion.name, 'direccion': self.config_id.invoice_journal_id.direccion.street }
     
     def _loader_params_product_product(self):
         result = super(PosSession, self)._loader_params_product_product()
@@ -84,7 +84,7 @@ class PosSession(models.Model):
         return result
 
     def _loader_params_pos_gt_extra(self):
-        return {'search_params': {'domain': [('company_id', '=', self.config_id.company_id.id)], 'fields': ['name', 'sequence', 'type'], 'load': False}}
+        return {'search_params': {'domain': ['|', ('company_id', '=', False), ('company_id', '=', self.config_id.company_id.id)], 'fields': ['name', 'sequence', 'type'], 'load': False}}
     
     def _get_pos_ui_pos_gt_extra(self, params):
         extras = self.env['pos_gt.extra'].search_read(**params['search_params'])
@@ -93,7 +93,7 @@ class PosSession(models.Model):
             e['lineas'] = [];
             extras_por_id[e['id']] = e
 
-        lineas = self.env['pos_gt.extra.line'].search_read(domain=[('extra_id.company_id', '=', self.config_id.company_id.id)], fields=['name', 'extra_id', 'product_id', 'qty', 'price_extra'], load=False)
+        lineas = self.env['pos_gt.extra.line'].search_read(domain=['|', ('extra_id.company_id', '=', False), ('extra_id.company_id', '=', self.config_id.company_id.id)], fields=['name', 'extra_id', 'product_id', 'qty', 'price_extra'], load=False)
         for l in lineas:
             extras_por_id[l['extra_id']]['lineas'].append(l)
         
@@ -102,5 +102,3 @@ class PosSession(models.Model):
     def _create_picking_at_end_of_session(self):
         self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
         super(PosSession, self)._create_picking_at_end_of_session()
-
-
