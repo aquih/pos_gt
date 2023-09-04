@@ -28,7 +28,6 @@ class PosOrder(models.Model):
         self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
         super(PosOrder, self)._create_order_picking()
         
-            
     @api.model
     def search_paid_order_ids(self, config_id, domain, limit, offset):
         """Search for 'paid' orders that satisfy the given domain, limit and offset."""
