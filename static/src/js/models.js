@@ -123,8 +123,6 @@ odoo.define('pos_gt.models', function (require) {
                         'title': 'Extras',
                         'list': list
                     });
-                    console.log(confirmed);
-                    console.log(payload);
                     if (confirmed) {
                         var extra_product = db.get_product_by_id(payload.product_id);
                         order.add_product(extra_product, { price: payload.price_extra, quantity: payload.qty, extras: { price_manually_set: true, product_extra_type: payload.type, product_extra_parent_line: parent_line } });
