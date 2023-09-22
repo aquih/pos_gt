@@ -5,64 +5,67 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="pos_hr.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <div id="pos_interface_section" position="inside">
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
-                        <field name="pos_ask_tag_number"/>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="pos_ask_tag_number" string="Pedir etiqueta"/>
-                        <div class="text-muted">
-                            Permite asignar una numero al pedido para que el cliente se lleve el numero y luego se le llame por ese numero.
+            <div id="pos_interface_section" position="after">
+                <h2 class="mt16">Extras</h2>
+                <div class="row mt16 o_settings_container" id="pos_gt">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="pos_ask_tag_number"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_ask_tag_number" string="Pedir etiqueta"/>
+                            <div class="text-muted">
+                                Permite asignar una numero al pedido para que el cliente se lleve el numero y luego se le llame por ese numero.
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
-                        <field name="pos_takeout_option"/>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="pos_takeout_option"/>
-                        <div class="text-muted">
-                            Poder marcar pedido para llevar
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="pos_takeout_option"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_takeout_option"/>
+                            <div class="text-muted">
+                                Poder marcar pedido para llevar
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
-                        <field name="pos_permitir_devolver"/>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="pos_permitir_devolver"/>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="pos_default_client_id"/>
-                        <div class="content-group mt16">
-                            <field name="pos_default_client_id"/>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="pos_permitir_devolver"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_permitir_devolver"/>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="pos_ask_analytic_account_id"/>
-                        <div class="content-group mt16">
-                            <field name="pos_ask_analytic_account_id"/>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_default_client_id"/>
+                            <div class="content-group mt16">
+                                <field name="pos_default_client_id"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-lg-6 o_setting_box">
-                    <div class="o_setting_left_pane">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_ask_analytic_account_id"/>
+                            <div class="content-group mt16">
+                                <field name="pos_ask_analytic_account_id"/>
+                            </div>
+                        </div>
                     </div>
-                    <div class="o_setting_right_pane">
-                        <label for="pos_ask_diario_nota_credito_id"/>
-                        <div class="content-group mt16">
-                            <field name="pos_ask_diario_nota_credito_id"/>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_ask_diario_nota_credito_id"/>
+                            <div class="content-group mt16">
+                                <field name="pos_ask_diario_nota_credito_id"/>
+                            </div>
                         </div>
                     </div>
                 </div>
