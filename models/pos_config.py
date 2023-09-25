@@ -11,7 +11,6 @@ class PosConfig(models.Model):
     default_client_id = fields.Many2one("res.partner", string="Cliente CF")
     analytic_account_id = fields.Many2one("account.analytic.account", string="Cuenta Analítica")
     diario_nota_credito_id = fields.Many2one("account.journal", string="Diario para Nota de Crédito")
-    permitir_devolver = fields.Boolean("Permitir devolver")
 
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -22,4 +21,3 @@ class ResConfigSettings(models.TransientModel):
     pos_default_client_id = fields.Many2one(related='pos_config_id.default_client_id', readonly=False)
     pos_ask_analytic_account_id = fields.Many2one(related='pos_config_id.analytic_account_id', readonly=False)
     pos_ask_diario_nota_credito_id = fields.Many2one(related='pos_config_id.diario_nota_credito_id', readonly=False)
-    pos_permitir_devolver = fields.Boolean(related='pos_config_id.permitir_devolver', readonly=False)

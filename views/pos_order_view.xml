@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="pos_gt_view_pos_pos_form" model="ir.ui.view">
-        <field name="name">pos_gt.pos.order.form</field>
-        <field name="model">pos.order</field>
-        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
-        <field name="arch" type="xml">
-            <button name="refund" position="after">
-                <button name="nota_credito" string="Nota de Credito" type="object" attrs="{'invisible':['|', ('state','=','draft'), ('amount_total','&lt;',0)]}"/>
-            </button>
-            <field name="partner_id" position="after">
-                <field name="pedido_origen_id"/>
-                <field name="permitir_devolver" invisible="True"/>
-            </field>
-            <button name="refund" position="attributes">
-                <attribute name="attrs">{'invisible':[('permitir_devolver','=', False)]}</attribute>
-            </button>
-        </field>
-    </record>
-
 </odoo>
