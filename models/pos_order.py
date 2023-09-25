@@ -33,8 +33,6 @@ class PosOrder(models.Model):
         totalCount = self.search_count(real_domain)
         return {'ids': ids, 'totalCount': totalCount}
 
-        return res
-
 class PosSession(models.Model):
     _inherit = 'pos.session'
     
