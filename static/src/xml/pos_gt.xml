@@ -38,4 +38,15 @@
         </xpath>
     </t>
 
+    <t t-inherit="point_of_sale.ProductInfoPopup" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('section-financials-body')]/table/tr[3]" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('section-financials-body')]/table/tr[2]" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('section-order-body')]/table/tr[3]" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('section-order-body')]/table/tr[2]" position="replace">
+        </xpath>
+    </t>
+
 </templates>
