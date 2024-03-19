@@ -26,9 +26,8 @@
     'installable': True,
     'auto_install': False,
     'assets': {
-        'point_of_sale.assets': [
-            'pos_gt/static/src/js/**/*',
-            'pos_gt/static/src/xml/**/*',
+        'point_of_sale._assets_pos': [
+            'pos_gt/static/src/**/*',
         ],
     },
     'license': 'Other OSI approved licence',

@@ -27,14 +27,6 @@ class PosOrder(models.Model):
 class PosSession(models.Model):
     _inherit = 'pos.session'
     
-    def _pos_ui_models_to_load(self):
-        result = super()._pos_ui_models_to_load()
-        new_model = 'pos_gt.extra'
-        if new_model not in result:
-            result.append(new_model)
-
-        return result
-    
     def _pos_data_process(self, loaded_data):
         super()._pos_data_process(loaded_data)
         loaded_data['diario_facturacion'] = { 'nombre': self.config_id.invoice_journal_id.direccion.name, 'direccion': self.config_id.invoice_journal_id.direccion.street }
