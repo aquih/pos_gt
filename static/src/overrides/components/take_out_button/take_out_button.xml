@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    
+    <t t-name="pos_gt.TakeOutButton">
+        <span class='control-button js_take_out btn btn-light rounded-0 fw-bolder' t-on-click="() => this.click()">
+            <t t-if="state.take_out">
+                <i class='fa fa-shopping-bag' /> Llevar
+            </t>
+            <t t-if="!state.take_out">
+                <i class='fa fa-shopping-bag' /> Restaurante
+            </t>
+        </span>
+    </t>
+
+</templates>
