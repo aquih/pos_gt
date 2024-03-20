@@ -9,8 +9,7 @@ class TakeOutButton extends Component {
 
     setup() {
         this.pos = usePos();
-        console.debug(this.pos)
-        super.setup();
+
         const order = this.pos.get_order();
         this.state = useState({ take_out: order.take_out || false });
     }

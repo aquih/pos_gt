@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    
+    <t t-name="pos_gt.TagNumberButton">
+        <span class='control-button js_take_out btn btn-light rounded-0 fw-bolder' t-on-click="() => this.click()">
+            <t t-if="state.tag_number &gt; -1">
+                <i class='fa fa-tag' /> <t t-esc="state.tag_number" />
+            </t>
+            <t t-if="state.tag_number &lt; 0">
+                <i class='fa fa-tag' /> Etiqueta
+            </t>
+        </span>
+    </t>
+
+</templates>
