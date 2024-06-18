@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
+    <t t-inherit="point_of_sale.Chrome" t-inherit-mode="extension">
+        <CashMoveButton position="replace">
+            <CashMoveButton t-if="true" />
+        </CashMoveButton>
+    </t>
+
     <t t-name="TagNumberButton" owl="1">
         <div class='control-button js_tag_number'>
             <t t-if="state.tag_number &gt; -1">
