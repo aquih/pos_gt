@@ -32,6 +32,14 @@
                     </div>
                     <div class="col-12 col-lg-6 o_setting_box">
                         <div class="o_setting_left_pane">
+                            <field name="pos_permitir_devolver"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_permitir_devolver"/>
+                        </div>
+                    </div>                    
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
                         </div>
                         <div class="o_setting_right_pane">
                             <label for="pos_default_client_id"/>
