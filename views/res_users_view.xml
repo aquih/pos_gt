@@ -11,7 +11,7 @@
                     <notebook position="inside">
                         <page string="Tienda">
                             <group>
-                                <field name="default_pos_id"/>
+                                <field name="default_pos_id" widget="many2many_tags"/>
                                 <field name="default_location_id"/>
                                 <field name="default_analytic_account_id"/>
                             </group>

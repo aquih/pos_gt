@@ -4,7 +4,7 @@
         <record id="pos_gt_config" model="ir.rule">
             <field name="name">POS Config</field>
             <field name="model_id" ref="point_of_sale.model_pos_config"/>
-            <field name="domain_force">[('id','=',user.default_pos_id.id)]</field>
+            <field name="domain_force">[('id','in',user.default_pos_id.ids)]</field>
             <field name="groups" eval="[(4, ref('point_of_sale.group_pos_user'))]"/>
         </record>
         <record id="pos_gt_config_manager" model="ir.rule">
@@ -17,7 +17,7 @@
         <record id="pos_gt_order" model="ir.rule">
             <field name="name">POS Oder</field>
             <field name="model_id" ref="point_of_sale.model_pos_order"/>
-            <field name="domain_force">[('config_id','=',user.default_pos_id.id)]</field>
+            <field name="domain_force">[('config_id','in',user.default_pos_id.ids)]</field>
             <field name="groups" eval="[(4, ref('point_of_sale.group_pos_user'))]"/>
         </record>
         <record id="pos_gt_order_manager" model="ir.rule">
@@ -30,7 +30,7 @@
         <record id="pos_gt_session" model="ir.rule">
             <field name="name">POS Session</field>
             <field name="model_id" ref="point_of_sale.model_pos_session"/>
-            <field name="domain_force">[('config_id','=',user.default_pos_id.id)]</field>
+            <field name="domain_force">[('config_id','in',user.default_pos_id.ids)]</field>
             <field name="groups" eval="[(4, ref('point_of_sale.group_pos_user'))]"/>
         </record>
         <record id="pos_gt_session_manager" model="ir.rule">
