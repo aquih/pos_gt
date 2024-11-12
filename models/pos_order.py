@@ -8,10 +8,10 @@ import logging
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
-    def _prepare_invoice_line(self, order_line):
-        res = super(PosOrder, self)._prepare_invoice_line(order_line)
-        if order_line.order_id.config_id.analytic_account_id:
-            res['analytic_distribution'] = dict([(str(order_line.order_id.config_id.analytic_account_id.id), 100),])
+    def _get_invoice_lines_values(self, line_values, pos_order_line):
+        res = super(PosOrder, self)._get_invoice_lines_values(line_values, pos_order_line)
+        if pos_order_line.order_id.config_id.analytic_account_id:
+            res['analytic_distribution'] = dict([(str(pos_order_line.order_id.config_id.analytic_account_id.id), 100),])
         return res
 
     def _prepare_invoice_vals(self):

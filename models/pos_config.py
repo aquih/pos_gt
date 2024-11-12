@@ -22,5 +22,5 @@ class ResConfigSettings(models.TransientModel):
     pos_ask_tag_number = fields.Boolean(related='pos_config_id.ask_tag_number', readonly=False)
     pos_takeout_option = fields.Boolean(related='pos_config_id.takeout_option', readonly=False)
     pos_default_client_id = fields.Many2one(related='pos_config_id.default_client_id', readonly=False)
-    pos_ask_analytic_account_id = fields.Many2one(related='pos_config_id.analytic_account_id', readonly=False)
+    pos_analytic_account_id = fields.Many2one(related='pos_config_id.analytic_account_id', readonly=False)
     pos_diario_nota_credito_id = fields.Many2one(related='pos_config_id.diario_nota_credito_id', readonly=False)

@@ -17,7 +17,7 @@
                         <field name="pos_default_client_id"/>
                     </setting>
                     <setting string="Cuenta Analítica para Despachos">
-                        <field name="pos_ask_analytic_account_id"/>
+                        <field name="pos_analytic_account_id"/>
                     </setting>
                     <setting string="Diario para Nota de Crédito" help="Permite asignar una numero al pedido para que el cliente se lleve el numero y luego se le llame por ese numero.">
                         <field name="pos_diario_nota_credito_id"/>
