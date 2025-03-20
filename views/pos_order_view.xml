@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
+    <record id="pos_gt_view_pos_order_tree" model="ir.ui.view">
+        <field name="name">pos_gt.pos.order.tree</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="config_id" position="after">
+                <field name="take_out"/>
+            </field>
+        </field>
+    </record>
 </odoo>
