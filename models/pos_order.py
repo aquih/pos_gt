@@ -8,7 +8,7 @@ import logging
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
-    para_llevar = fields.Boolean('Pedido para llevar')
+    take_out = fields.Boolean('Pedido para llevar')
 
     def _get_invoice_lines_values(self, line_values, pos_order_line):
         res = super(PosOrder, self)._get_invoice_lines_values(line_values, pos_order_line)
@@ -28,13 +28,13 @@ class PosOrder(models.Model):
     
     def _export_for_ui(self, order):
         res = super(PosOrder, self)._export_for_ui(order)
-        res.update({'take_out': order.para_llevar})
+        res.update({'take_out': order.take_out})
         return res
 
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
-        res.update({'para_llevar': ui_order.get('take_out'),})
+        res.update({'take_out': ui_order.get('take_out'),})
         return res
 
 class PosSession(models.Model):
