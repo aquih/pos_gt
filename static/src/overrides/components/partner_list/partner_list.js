@@ -6,6 +6,6 @@ import { patch } from "@web/core/utils/patch";
 patch(PartnerListScreen.prototype, {
     createPartner() {
         super.createPartner();
-        this.state.editModeProps.partner.vat = this.state.query;
+        this.state.editModeProps.partner.vat = this.state.query || 'CF';
     },
 });
