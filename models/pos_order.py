@@ -31,6 +31,29 @@ class PosOrder(models.Model):
         res.update({'take_out': order.take_out})
         return res
 
+    def nota_credito(self):
+        res = self.refund()
+        nuevo = self.browse(res['res_id'])
+        for p in self.payment_ids:
+            nuevo.add_payment({
+                'name': _('return'),
+                'pos_order_id': nuevo.id,
+                'amount': -p.amount,
+                'payment_date': fields.Date.context_today(self),
+                'payment_method_id': p.payment_method_id.id,
+            })
+
+        nuevo.action_pos_order_paid()
+        nuevo._create_order_picking()
+        nuevo.action_pos_order_invoice()
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'pos.order',
+            'views': [[False, "form"]],
+            'res_id': nuevo.id,
+        }
+
     @api.model
     def _order_fields(self, ui_order):
         res = super(PosOrder, self)._order_fields(ui_order)
