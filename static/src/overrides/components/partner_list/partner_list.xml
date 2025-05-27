@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     
-    <t t-name="PartnerListScreen" t-inherit="point_of_sale.PartnerListScreen" t-inherit-mode="extension">
-        <xpath expr="//th[3]" position="after">
-            <th>NIT</th>
-        </xpath>
-    </t>
-    
     <t t-name="PartnerLine" t-inherit="point_of_sale.PartnerLine" t-inherit-mode="extension">
-        <xpath expr="//td[3]" position="after">
-            <td>
-                <t t-esc="props.partner.vat or ''" />
-            </td>
+        <xpath expr="//t[@t-if='ui.isSmall']//div[hasclass('company-field')]" position="after">
+            <div class="vat-field text-bg-muted" t-esc="props.partner.vat or ''" />
+        </xpath>
+        <xpath expr="//t[@t-else='']//div[hasclass('company-field')]" position="after">
+            <div class="vat-field text-bg-muted" t-esc="props.partner.vat or ''" />
         </xpath>
     </t>
 

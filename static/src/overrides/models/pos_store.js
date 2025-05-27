@@ -8,11 +8,18 @@ patch(PosStore.prototype, {
     add_new_order() {
         const order = super.add_new_order(...arguments);
         if (this.config.default_client_id) {
-            order.set_partner(this.db.get_partner_by_id(this.config.default_client_id[0]));
+            order.set_partner(this.config.default_client_id);
         }
-        if (this.config.invoice_journal_id) {
+        if (this.config.diario_factura_nombre) {
             order.set_to_invoice(true);
         }
         return order;
+    },
+    editPartnerContext(partner) {
+        const res = super.editPartnerContext(partner);
+        return {
+            ...res,
+            default_vat: this.env.nit_gt,
+        };
     }
 })
