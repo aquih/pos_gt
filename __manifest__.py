@@ -3,7 +3,7 @@
 
 {
     'name': 'Point of Sale para Guatemala',
-    'version': '6.3',
+    'version': '6.4',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Cambios al Punto de Venta para el manejo en Guatemala',

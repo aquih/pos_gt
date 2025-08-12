@@ -35,6 +35,12 @@ class ReporteCierre(models.AbstractModel):
             total += s.total_payments_amount
         return total
 
+    def total_efectivo(self, docs):
+        total = 0
+        for s in docs:
+            total += sum(s.sudo().statement_line_ids.mapped('amount'))
+        return total
+
     def lineas_egresos(self, docs):
         diarios = {}
         for s in docs:
@@ -65,6 +71,7 @@ class ReporteCierre(models.AbstractModel):
             'lineas_ventas': self.lineas_ventas,
             'total_ventas': self.total_ventas,
             'lineas_ingresos': self.lineas_ingresos,
+            'total_efectivo': self.total_efectivo,
             'total_ingresos': self.total_ingresos,
             'lineas_egresos': self.lineas_egresos,
             'total_egresos': self.total_egresos,
