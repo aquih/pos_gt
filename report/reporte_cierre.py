@@ -75,4 +75,5 @@ class ReporteCierre(models.AbstractModel):
             'total_ingresos': self.total_ingresos,
             'lineas_egresos': self.lineas_egresos,
             'total_egresos': self.total_egresos,
+            'current_company_id': self.env.company,
         }
