@@ -7,7 +7,11 @@ patch(Order.prototype, {
     //@override
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
-        result.partner = this.partner
+        result.partner = this.partner;
+        result.tag_number = this.tag_number;
+        result.ask_tag_number = this.pos.config.ask_tag_number;
+        result.take_out = this.take_out;
+        result.takeout_option = this.pos.config.takeout_option;
         return result
     },
     init_from_JSON(json) {
