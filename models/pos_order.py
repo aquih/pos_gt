@@ -9,6 +9,7 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     take_out = fields.Boolean('Pedido para llevar')
+    tag_number = fields.Integer('Etiqueta')
 
     def _get_invoice_lines_values(self, line_values, pos_order_line):
         res = super(PosOrder, self)._get_invoice_lines_values(line_values, pos_order_line)
