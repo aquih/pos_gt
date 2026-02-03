@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, Command
 from odoo.exceptions import UserError
-from odoo.osv.expression import AND
+
 import logging
 
 class PosOrder(models.Model):

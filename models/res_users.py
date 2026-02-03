@@ -2,6 +2,8 @@
 
 from odoo import models, fields, api, Command
 
+import logging
+
 class Users(models.Model):
     _inherit = 'res.users'
 

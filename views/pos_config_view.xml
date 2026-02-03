@@ -7,12 +7,6 @@
         <field name="arch" type="xml">
             <block id="pos_inventory_section" position="after">
                 <block title="Extras" id="pos_gt_extras">
-                    <setting string="Pedir Etiqueta" help="Permite asignar una numero al pedido para que el cliente se lleve el numero y luego se le llame por ese numero.">
-                        <field name="pos_ask_tag_number"/>
-                    </setting>
-                    <setting string="Poder Marcar Pedido para Llevar">
-                        <field name="pos_takeout_option"/>
-                    </setting>
                     <setting string="Cliente CF">
                         <field name="pos_default_client_id"/>
                     </setting>

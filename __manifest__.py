@@ -3,7 +3,7 @@
 
 {
     'name': 'Point of Sale para Guatemala',
-    'version': '6.8',
+    'version': '7.0',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Cambios al Punto de Venta para el manejo en Guatemala',
@@ -15,9 +15,8 @@
         'views/pos_config_view.xml',
         'views/res_users_view.xml',
         'views/pos_order_view.xml',
-        'views/reports.xml',
-        'views/reporte_cierre.xml',
-        'views/pos_order_report_view.xml',
+        'report/reports.xml',
+        'report/reporte_cierre.xml',
         'security/pos_gt_security.xml',
         'security/ir.model.access.csv'
     ],
