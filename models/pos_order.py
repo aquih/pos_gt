@@ -8,13 +8,10 @@ import logging
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
-    take_out = fields.Boolean('Pedido para llevar')
-    tag_number = fields.Integer('Etiqueta')
-
-    def _get_invoice_lines_values(self, line_values, pos_order_line):
-        res = super(PosOrder, self)._get_invoice_lines_values(line_values, pos_order_line)
-        if pos_order_line.order_id.config_id.analytic_account_id:
-            res['analytic_distribution'] = dict([(str(pos_order_line.order_id.config_id.analytic_account_id.id), 100),])
+    def _get_invoice_lines_values(self, line_values, pos_line, move_type):
+        res = super(PosOrder, self)._get_invoice_lines_values(lline_values, pos_line, move_type)
+        if pos_line.order_id.config_id.analytic_account_id:
+            res['analytic_distribution'] = dict([(str(pos_line.order_id.config_id.analytic_account_id.id), 100),])
         return res
 
     def _prepare_invoice_vals(self):
@@ -27,11 +24,6 @@ class PosOrder(models.Model):
         self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
         super(PosOrder, self)._create_order_picking()
     
-    def _export_for_ui(self, order):
-        res = super(PosOrder, self)._export_for_ui(order)
-        res.update({'take_out': order.take_out})
-        return res
-
     def nota_credito(self):
         res = self.refund()
         nuevo = self.browse(res['res_id'])
@@ -54,12 +46,6 @@ class PosOrder(models.Model):
             'views': [[False, "form"]],
             'res_id': nuevo.id,
         }
-
-    @api.model
-    def _order_fields(self, ui_order):
-        res = super(PosOrder, self)._order_fields(ui_order)
-        res.update({'take_out': ui_order.get('take_out'),})
-        return res
 
 class PosSession(models.Model):
     _inherit = 'pos.session'
