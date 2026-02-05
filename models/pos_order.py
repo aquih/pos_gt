@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from odoo import models, fields, api, Command
+from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
 
 import logging
@@ -9,20 +9,20 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     def _get_invoice_lines_values(self, line_values, pos_line, move_type):
-        res = super(PosOrder, self)._get_invoice_lines_values(line_values, pos_line, move_type)
+        res = super()._get_invoice_lines_values(line_values, pos_line, move_type)
         if pos_line.order_id.config_id.analytic_account_id:
             res['analytic_distribution'] = dict([(str(pos_line.order_id.config_id.analytic_account_id.id), 100),])
         return res
 
     def _prepare_invoice_vals(self):
-        res = super(PosOrder, self)._prepare_invoice_vals()
+        res = super()._prepare_invoice_vals()
         if self.amount_total < 0 and self.config_id.diario_nota_credito_id:
             res['journal_id'] = self.config_id.diario_nota_credito_id.id
         return res
     
     def _create_order_picking(self):
         self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
-        super(PosOrder, self)._create_order_picking()
+        super()._create_order_picking()
     
     def nota_credito(self):
         res = self.refund()
@@ -51,5 +51,4 @@ class PosSession(models.Model):
     _inherit = 'pos.session'
                 
     def _create_picking_at_end_of_session(self):
-        self = self.with_context(analytic_account_id=self.config_id.analytic_account_id)
-        super(PosSession, self)._create_picking_at_end_of_session()
+        super(PosSession, self.with_context(analytic_account_id=self.config_id.analytic_account_id))._create_picking_at_end_of_session()
