@@ -12,8 +12,11 @@ class PosOrder(models.Model):
         res = super()._get_invoice_lines_values(line_values, pos_line, move_type)
         if pos_line.order_id.config_id.analytic_account_id:
             res['analytic_distribution'] = dict([(str(pos_line.order_id.config_id.analytic_account_id.id), 100),])
+        if pos_line.pack_lot_ids:
+            lotes = ', '.join([l.lot_name for l in pos_line.pack_lot_ids if l.lot_name])
+            res['name'] += ': ' + lotes
         return res
-
+    
     def _prepare_invoice_vals(self):
         res = super()._prepare_invoice_vals()
         if self.amount_total < 0 and self.config_id.diario_nota_credito_id:

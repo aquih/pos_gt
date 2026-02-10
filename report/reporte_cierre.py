@@ -4,7 +4,7 @@ from odoo import api, models
 
 class ReporteCierre(models.AbstractModel):
     _name = 'report.pos_gt.reporte_cierre'
-    _description = 'Reporte de cierre'
+    _description = 'Reporte de cierre de caja'
 
     def lineas_ventas(self, docs):
         lineas = []
