@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'Point of Sale para Guatemala',
+    'name': 'Punto de venta para Guatemala',
     'version': '7.4',
     'category': 'Point of Sale',
     'sequence': 6,
-    'summary': 'Cambios al Punto de Venta para el manejo en Guatemala',
-    'description': """ Cambios al Punto de Venta para el manejo en Guatemala """,
-    'author': 'Rodrigo Fernandez',
-    'website': 'http://aquih.com',
+    'summary': 'Cambios al Punto de venta para el manejo en Guatemala',
+    'description': """ Cambios al punto de venta para el manejo en Guatemala """,
+    'author': 'aquíH',
+    'website': 'http://www.aquih.com',
     'depends': ['l10n_gt_extra', 'pos_hr'],
     'data': [
         'views/pos_config_view.xml',
