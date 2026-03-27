@@ -1,9 +1,6 @@
-
-# -*- coding: utf-8 -*-
-
 {
     'name': 'Punto de venta para Guatemala',
-    'version': '7.4',
+    'version': '7.5',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Cambios al Punto de venta para el manejo en Guatemala',

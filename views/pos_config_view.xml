@@ -13,7 +13,7 @@
                     <setting string="Cuenta Analítica para Despachos">
                         <field name="pos_analytic_account_id"/>
                     </setting>
-                    <setting string="Diario para Nota de Crédito" help="Permite asignar una numero al pedido para que el cliente se lleve el numero y luego se le llame por ese numero.">
+                    <setting string="Diario para Nota de Crédito" help="El diario seleccionado se usará para las facturas rectificativas de las devoluciones.">
                         <field name="pos_diario_nota_credito_id"/>
                     </setting>
                 </block>
