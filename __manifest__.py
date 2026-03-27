@@ -2,13 +2,13 @@
 
 {
     'name': 'Point of Sale para Guatemala',
-    'version': '5.6',
+    'version': '5.7',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Cambios al Punto de Venta para el manejo en Guatemala',
     'description': """ Cambios al Punto de Venta para el manejo en Guatemala """,
     'author': 'Rodrigo Fernandez',
-    'website': 'http://aquih.com',
+    'website': 'http://www.aquih.com',
     'depends': ['l10n_gt_extra', 'pos_hr'],
     'data': [
         'views/pos_config_view.xml',
