@@ -7,7 +7,7 @@ patch(PosStore.prototype, {
     //@override
     addNewOrder(data = {}) {
         const order = super.addNewOrder(...arguments);
-        if (this.config.default_client_id) {
+        if (this.config.default_client_id && !order.getPartner()) {
             order.setPartner(this.config.default_client_id);
         }
         if (this.config.diario_factura_nombre) {
